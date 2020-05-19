@@ -1,8 +1,8 @@
 # SampleDock
 Molecular design framework the merges generative AI and molecular docking
 
-# Software:
+## Software:
 
-# Target Specific Libraries:
+## Target Specific Libraries:
 
 
