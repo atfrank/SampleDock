@@ -1,0 +1,18 @@
+######### Parameters for Stock JTNN VAE Model ########
+vocab_loc = ../moses/vocab.txt
+hidden_size = 450
+latent_size = 56                                   #28 for each latent vector
+depthT = 20
+depthG = 3
+model_loc = ../models/moses-h450z56/model.iter-400000
+
+############# Parameters for rDock ###################
+receptor_name = CDK2                           # name the receptor to create dir
+receptor_file = ../targets/CDK2_5IEV/5IEV.mol2     # must be mol2 format
+ligand_file = ../targets/CDK2_5IEV/Roniciclib.sd   # must be sd format
+cavity_protocol = rbcavity -was -d -r              # cmd and option for creating pocket
+
+############ Parameters for SnD #####################
+ncycle = 5                                      # number of cycles to be run
+ndesign = 20                                       # number of designs to be generated per cycle
+seed_smi = C1=CC=CC=C1                             # initial seeding SMILES for the first cycle, default to benzene
