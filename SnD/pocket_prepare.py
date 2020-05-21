@@ -65,8 +65,8 @@ def prep_prm(receptor,ligand,recep_name,target_dir):
 def create_cav(prmfile):
     # rbcavity must be installed/loaded to execute the cmdline
     cmdline = "rbcavity -was -d -r %s"%prmfile
-    p = subprocess.Popen(cmdline, shell=True)
-    p.wait()
+    proc = subprocess.Popen(cmdline, shell=True)
+    proc.wait()
     print('Docking pocket grid created for: \n'+prmfile+'\n')
     
 if __name__ == "__main__":
