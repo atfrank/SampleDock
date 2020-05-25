@@ -1,5 +1,4 @@
 # Prepare pocket_docking.prm file for rDock
-import argparse
 import subprocess
 import os
 
@@ -45,7 +44,7 @@ def wrt_prm(parameter,filename='pocket_docking.prm'):
     with open(filename,'w') as f:
         f.writelines(line for line in parameter)
     f.close()
-    print('Parameters saved at: '+filename+'\n')
+    print('\nDocking Parameters File Saved at: \n'+filename+'\n')
     
 def prep_prm(receptor,ligand,recep_name,target_dir):
     
@@ -60,7 +59,7 @@ def prep_prm(receptor,ligand,recep_name,target_dir):
     prmfile = cav_dir+"/pocket_docking.prm"
     param = fill_param(receptor,ligand,recep_name)
     wrt_prm(param,prmfile)
-    return prmfile
+    return prmfile, cav_dir
 
 def create_cav(prmfile):
     # rbcavity must be installed/loaded to execute the cmdline
@@ -70,7 +69,7 @@ def create_cav(prmfile):
     print('Docking pocket grid created for: \n'+prmfile+'\n')
     
 if __name__ == "__main__":
-    
+    import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("-r", "--receptor", help="receptor file path; must be .mol2 format")
     parser.add_argument("-l","--ligand", help="ligand file path; must be .sd format")
@@ -81,7 +80,7 @@ if __name__ == "__main__":
     a = parser.parse_args()
 
     target_dir = mk_dir(a.output,a.target)
-    prmfile = prep_prm(a.receptor,a.ligand,a.target,target_dir)
+    prmfile, cav_dir = prep_prm(a.receptor,a.ligand,a.target,target_dir)
     print('\n')
     if prmfile:
         create_cav(prmfile)

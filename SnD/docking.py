@@ -4,30 +4,13 @@ from rdkit.Chem import AllChem
 import os
 import subprocess
 
-def smiles_to_sdfile(smiles_list, dsgn_dir):
-    lig_file_names = []
-    for i, smi in enumerate(smiles_list):
-        name = 'design_'+str(i)
-        output = dsgn_dir+'/'+name+'.sd'
-        m2 = Chem.MolFromSmiles(smi)
-        AllChem.Compute2DCoords(m2)
-        m2.SetProp("_Name", name)
-        m3 = Chem.AddHs(m2)
-        AllChem.EmbedMolecule(m3,AllChem.ETKDG())
-        m3.SetProp("SMILES", smi)
-        w = Chem.SDWriter(output)
-        w.write(m3)
-        w.flush()
-        lig_file_names.append(output)
-    w.close()
-    return lig_file_names
-
-def dock(ligs, dock_dir, prmfile, docking_prm, npose):
-    print('Docking in progress')
+def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
+    # ligs must be a list of file path
+    print('Docking in Progress\t', end = '\r')
     procs = []
     for i,lig in enumerate(ligs):
-        output = os.path.join(dock_dir,'pose_org_%s'%i)
-        screenout = os.path.join(dock_dir,'pose_org_%s.out'%i)
+        output = os.path.join(dock_dir,prefix+str(i))
+        screenout = os.path.join(dock_dir,prefix+str(i)+'.out')
         cmdline = 'rbdock -i %s -o %s -r %s -p %s -T 1  -n %s > %s'\
                 %(lig, output, prmfile, docking_prm, npose, screenout)
         proc = subprocess.Popen(cmdline, shell=True)
@@ -36,13 +19,20 @@ def dock(ligs, dock_dir, prmfile, docking_prm, npose):
     for proc in procs:
         # makes sure the docking has completed before sorting the score
         proc.wait()
+    print('Docking Complete!  \t', end = '\r')
 
-    print('Docking complete')
-
-def sort_pose(dock_dir, sort_by):
+def sort_pose(dock_dir, sort_by, prefix = None):
     # list all pose_org.sd files
-    poses_mols = [x for x in os.listdir(dock_dir) 
-                  if x.endswith('.sd') and x.startswith('pose_org')]
+    if type(prefix) == str:
+        poses_mols = [x for x in os.listdir(dock_dir) 
+                      if x.endswith('.sd') and x.startswith(prefix)]
+    else:
+        poses_mols = [x for x in os.listdir(dock_dir) 
+                      if x.endswith('.sd')]
+    
+    if len(poses_mols) == 0: 
+        raise Exception('No .sd file matching the criteria in %s'%dock_dir)
+    
     best_poses = []
     for mol_path in poses_mols:
         mol_in = os.path.join(dock_dir,mol_path)
@@ -52,18 +42,18 @@ def sort_pose(dock_dir, sort_by):
         proc.wait()
         # retrieve the best pose mol for each design
         best_pose = Chem.SDMolSupplier(mol_out)[0]
-        best_poses.append((float(best_pose.GetProp(sort_by)),best_pose))
-    print('Pose sorted')
-    return sorted(best_poses,reverse=True)
+        best_poses.append((float(best_pose.GetProp(sort_by)),best_pose.GetProp('Name'),best_pose))
+    print('Docked Poses Sorted       \t', end = '\r')
+    return sorted(best_poses)
 
 def save_pose(sorted_poses, save_dir):
     # sort and save the best pose and score for each design
     w = Chem.SDWriter(save_dir+'/ranked_designs.sd')
     f = open(save_dir+'/scores.txt','w')
     
-    for score, m in sorted_poses:
-        f.write(m.GetProp('Name')+'\t'+str(score)+'\n')
-        w.write(m)
+    for score, name, mol in sorted_poses:
+        f.write(name+'\t'+str(score)+'\n')
+        w.write(mol)
         w.flush()
 
     w.close()
@@ -82,6 +72,8 @@ if __name__ == "__main__":
                         default = "SCORE.INTER")
     parser.add_argument("-p","--dprm", help="path to docking prm file, default to dock.prm (no solvation term)",
                         default = "dock.prm")
+    parser.add_argument("-x","--prefix", help="rDock output file prefix, default to 'docked'",
+                        default = "docked")
     a = parser.parse_args()
     
     a.input = os.path.abspath(a.input)
@@ -97,8 +89,10 @@ if __name__ == "__main__":
     
     lig_file_list = [a.input+'/'+x for x in os.listdir(a.input) if x.endswith('.sd')]
     
-    dock(lig_file_list, a.output, a.prm, a.dprm, a.npose)
-    ranked = sort_pose(a.output, a.sort)
+    dock(lig_file_list, a.output, a.prm, a.dprm, a.npose, a.prefix)
+    
+    ranked = sort_pose(a.output, a.sort, a.prefix)
+    
     save_pose(ranked, a.output)
     
     best_energy, best_mol = ranked[0]

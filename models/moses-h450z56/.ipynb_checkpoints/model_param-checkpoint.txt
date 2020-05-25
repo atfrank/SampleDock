@@ -5,4 +5,3 @@ latent_size = 56  #28 for each latent vector
 depthT = 20
 depthG = 3
 hidden_size = 450
-model_loc = '/home/ziqiaoxu/Sample&Dock_DnD/trained_models/moses-h450z56/model.iter-400000'
