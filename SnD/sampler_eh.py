@@ -101,8 +101,13 @@ if __name__ == "__main__":
     print('Docking pocket grid created')
 
     ## VAE encoding and decoding on the initial seeding smiles
-    design_list = jtvae.smiles_gen(p.seed_smi, p.ndesign)
-
+    try:
+        design_list = jtvae.smiles_gen(p.seed_smi, p.ndesign)
+    except KeyError as err:
+        print('KeyError:',err,
+              'is not part of the vocabulary, and %s cannot be used as input molecule!'%p.seed_smi)
+        exit()
+        
     ## Main loop: VAE on subsequent returned compounds
     for j in range(p.ncycle):
 
@@ -126,9 +131,14 @@ if __name__ == "__main__":
             try:
                 design_list = jtvae.smiles_gen(smi, p.ndesign)
             # go to the second best candidate if the best does not give any return
+            except KeyError as err:
+                print('KeyError:',err,'is not part of the vocabulary')
+                pass
+            
             if len(design_list) != 0: 
-                break
+                break 
+                
             else: 
                 print('Current best design (%s) has no offspring; trying on the next one \r'%name)
-
+                
         print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)
