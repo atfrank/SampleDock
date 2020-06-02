@@ -82,14 +82,23 @@ if __name__ == "__main__":
     # Load hyper parameters
     p = hyperparam_loader(a.params)
     
-    # Create working directory
-    wd = create_wd(a.output,p.receptor_name)
-    
     ## Load Stock JTNN VAE Model
     vocab = Vocab(p.vocab)
     jtvae = JTNNVAE(vocab, p.hidden_size, p.latent_size, p.depthT, p.depthG)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     jtvae.load_state_dict(torch.load(p.model_loc, map_location=device))
+    
+    ## VAE encoding and decoding on the initial seeding smiles
+    try:
+        design_list = jtvae.smiles_gen(p.seed_smi, p.ndesign)
+    except KeyError as err:
+        print('KeyError:',err,
+              'does not exist in the current JTVAE model vocabulary "%s" (the training set of the model did not contain this structure),'%p.vocab_loc,
+              'thus "%s" failed to initialize the model as seeding molecule!'%p.seed_smi)
+        exit()
+        
+    # Create working directory
+    wd = create_wd(a.output,p.receptor_name)
     
     ## prepare rdock .prm file and get file path
     prmfile, cav_dir = prep_prm(p.receptor_file,p.ligand_file,p.receptor_name,wd)
@@ -100,13 +109,8 @@ if __name__ == "__main__":
     proc.wait()
     print('Docking pocket grid created')
 
-    ## VAE encoding and decoding on the initial seeding smiles
-    try:
-        design_list = jtvae.smiles_gen(p.seed_smi, p.ndesign)
-    except KeyError as err:
-        print('KeyError:',err,
-              'is not part of the vocabulary, and %s cannot be used as input molecule!'%p.seed_smi)
-        exit()
+    
+    
         
     ## Main loop: VAE on subsequent returned compounds
     for j in range(p.ncycle):
