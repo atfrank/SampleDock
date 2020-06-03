@@ -9,6 +9,7 @@ source activate SampleDock
 python setup.py install
 ```
 rdock is required for the docking simulation, and can be installed following the instruction: http://rdock.sourceforge.net/installation/
+
 To run Sample and Dock, first specify the hyperparameters at `SnD/hyper.param`. Then, `python sampler.py`
 
 ## Software:
