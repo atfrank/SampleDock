@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mol_tree import Vocab, MolTree, MolTreeNode
-from nnutils import create_var, GRU
-from chemutils import enum_assemble, set_atommap
+from .mol_tree import Vocab, MolTree, MolTreeNode
+from .nnutils import create_var, GRU
+from .chemutils import enum_assemble, set_atommap
 import copy
 
 MAX_NB = 15

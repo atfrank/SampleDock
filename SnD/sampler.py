@@ -1,6 +1,5 @@
 import torch
 import sys
-sys.path.append('/home/ziqiaoxu/Sample_Dock_DnD/jtvae/')
 import os
 
 from rdkit import Chem
@@ -12,8 +11,7 @@ rdBase.DisableLog('rdApp.error')
 import subprocess
 from datetime import date
 # JTVAE tools
-from mol_tree import Vocab
-from jtnn_vae import JTNNVAE
+from jtvae import Vocab, JTNNVAE
 # Sample and Dock tools
 from pocket_prepare import prep_prm
 from docking import dock, sort_pose, save_pose
@@ -82,14 +80,23 @@ if __name__ == "__main__":
     # Load hyper parameters
     p = hyperparam_loader(a.params)
     
-    # Create working directory
-    wd = create_wd(a.output,p.receptor_name)
-    
     ## Load Stock JTNN VAE Model
     vocab = Vocab(p.vocab)
     jtvae = JTNNVAE(vocab, p.hidden_size, p.latent_size, p.depthT, p.depthG)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     jtvae.load_state_dict(torch.load(p.model_loc, map_location=device))
+    
+    ## VAE encoding and decoding on the initial seeding smiles
+    try:
+        design_list = jtvae.smiles_gen(p.seed_smi, p.ndesign)
+    except KeyError as err:
+        print('KeyError:',err,
+              'does not exist in the current JTVAE model vocabulary "%s" (the training set of the model did not contain this structure),'%p.vocab_loc,
+              'thus "%s" failed to initialize the model as seeding molecule!'%p.seed_smi)
+        exit()
+        
+    # Create working directory
+    wd = create_wd(a.output,p.receptor_name)
     
     ## prepare rdock .prm file and get file path
     prmfile, cav_dir = prep_prm(p.receptor_file,p.ligand_file,p.receptor_name,wd)
@@ -100,15 +107,13 @@ if __name__ == "__main__":
     proc.wait()
     print('Docking pocket grid created')
 
-    ## VAE encoding and decoding on the initial seeding smiles
-    design_list = jtvae.smiles_gen(p.seed_smi, p.ndesign)
-    print('\n')
     ## Main loop: VAE on subsequent returned compounds
     for j in range(p.ncycle):
 
         design_dir = os.path.abspath(os.path.join(wd,'cycle_%s'%j))
         docking_dir = os.path.abspath(os.path.join(design_dir, 'docking'))
-        os.makedirs(docking_dir)
+        try: os.makedirs(docking_dir)
+        except FileExistsError: print(docking_dir,'Overwritten')
 
         ## write .sdf file and get ligs file names
         ligs = smiles_to_sdfile(design_list,design_dir)
@@ -118,10 +123,21 @@ if __name__ == "__main__":
         ranked_poses = sort_pose(docking_dir, p.sort_by, p.prefix)
         save_pose(ranked_poses, design_dir)
 
-        ## Announce for the winner
-        best_energy, name, best_mol = ranked_poses[0]
-        best_smi = best_mol.GetProp('SMILES')
-        print("[INFO] Cycle %s: %s %s kcal/mol"%(j, best_smi, best_energy))
-        
-        ## Generate for next cycle
-        design_list = jtvae.smiles_gen(best_smi, p.ndesign)
+        ## Generate new design list
+        for energy, name, mol in ranked_poses:
+            smi = mol.GetProp('SMILES')
+            design_list = []
+            try:
+                design_list = jtvae.smiles_gen(smi, p.ndesign)
+            # go to the second best candidate if the best does not give any return
+            except KeyError as err:
+                print('KeyError:',err,'is not part of the vocabulary')
+                continue
+            
+            if len(design_list) != 0: 
+                break 
+                
+            else: 
+                print('Current best design (%s) has no offspring; trying on the next one \r'%name)
+                
+        print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)

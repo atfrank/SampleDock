@@ -1,9 +1,7 @@
 import sys
 import os
-sys.path.append('/home/ziqiaoxu/Sample_Dock_DnD/jtvae/')
 
-from mol_tree import Vocab
-from jtnn_vae import JTNNVAE
+from jtvae import Vocab, JTNNVAE
 import torch
 
 def jtvae_loader(params):

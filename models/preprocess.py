@@ -4,9 +4,9 @@ from multiprocessing import Pool
 
 import math, random, sys
 from optparse import OptionParser
-import cPickle as pickle
+import pickle
 
-from fast_jtnn import *
+from jtvae import *
 import rdkit
 
 def tensorize(smiles, assm=True):
