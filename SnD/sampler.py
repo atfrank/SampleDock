@@ -73,8 +73,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p","--params", help="parameter file for SnD", 
                         default = "./hyper.param")
-    parser.add_argument("-o","--output", help="directory for output, default to ../test", 
-                        default = "../test")
+    parser.add_argument("-o","--output", help="directory for output, default to ../SnD_designs", 
+                        default = "../SnD_designs")
     a = parser.parse_args()
     
     # Load hyper parameters
