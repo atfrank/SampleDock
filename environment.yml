@@ -1,0 +1,11 @@
+name: SampleDock
+channels:
+  - pytorch
+  - rdkit
+  - conda-forge
+
+dependencies:
+  - python=3.7
+  - pytorch
+  - cudatoolkit
+  - rdkit
