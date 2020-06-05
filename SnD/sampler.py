@@ -138,6 +138,6 @@ if __name__ == "__main__":
                 break 
                 
             else: 
-                print('Current best design (%s) has no offspring; trying on the next one \r'%name)
+                print('Current design (%s) has no offspring; trying the next one \r'%name)
                 
         print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)
