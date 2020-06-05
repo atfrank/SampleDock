@@ -30,7 +30,7 @@ class JTNNVAE(nn.Module):
         self.mpn = MPN(hidden_size, depthG)
 
         self.A_assm = nn.Linear(latent_size, hidden_size, bias=False)
-        self.assm_loss = nn.CrossEntropyLoss(size_average=False)
+        self.assm_loss = nn.CrossEntropyLoss(reduction='sum')
 
         self.T_mean = nn.Linear(hidden_size, latent_size)
         self.T_var = nn.Linear(hidden_size, latent_size)
