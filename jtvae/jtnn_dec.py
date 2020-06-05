@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mol_tree import Vocab, MolTree, MolTreeNode
-from nnutils import create_var, GRU
-from chemutils import enum_assemble, set_atommap
+from .mol_tree import Vocab, MolTree, MolTreeNode
+from .nnutils import create_var, GRU
+from .chemutils import enum_assemble, set_atommap
 import copy
 
 MAX_NB = 15
@@ -36,8 +36,8 @@ class JTNNDecoder(nn.Module):
         self.U_o = nn.Linear(hidden_size, 1)
 
         #Loss Functions
-        self.pred_loss = nn.CrossEntropyLoss(size_average=False)
-        self.stop_loss = nn.BCEWithLogitsLoss(size_average=False)
+        self.pred_loss = nn.CrossEntropyLoss(reduction='sum')
+        self.stop_loss = nn.BCEWithLogitsLoss(reduction='sum')
 
     def aggregate(self, hiddens, contexts, x_tree_vecs, mode):
         if mode == 'word':

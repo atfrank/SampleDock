@@ -3,7 +3,7 @@ import torch.nn as nn
 
 import math, random, sys
 import argparse
-from fast_jtnn import *
+from jtvae import Vocab, JTNNVAE
 import rdkit
 
 lg = rdkit.RDLogger.logger() 
@@ -26,8 +26,10 @@ vocab = Vocab(vocab)
 
 model = JTNNVAE(vocab, args.hidden_size, args.latent_size, args.depthT, args.depthG)
 model.load_state_dict(torch.load(args.model))
-model = model.cuda()
+
+if torch.cuda.is_available():
+    model = model.cuda()
 
 torch.manual_seed(0)
 for i in range(args.nsample):
-    print model.sample_prior()
+    print(model.sample_prior())
