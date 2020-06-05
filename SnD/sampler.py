@@ -75,6 +75,8 @@ if __name__ == "__main__":
                         default = "./hyper.param")
     parser.add_argument("-o","--output", help="directory for output, default to ../SnD_designs", 
                         default = "../SnD_designs")
+    parser.add_argument("-l","--local", help="use the local precompiled rdock binary file for docking", 
+                        action = 'store_true')
     a = parser.parse_args()
     
     # Load hyper parameters
@@ -83,7 +85,14 @@ if __name__ == "__main__":
     ## Load Stock JTNN VAE Model
     vocab = Vocab(p.vocab)
     jtvae = JTNNVAE(vocab, p.hidden_size, p.latent_size, p.depthT, p.depthG)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    if torch.cuda.is_available():
+    	device = torch.device("cuda")
+    	print('Using CUDA device:',torch.cuda.get_device_name(torch.cuda.current_device()))
+    else:
+     	device = torch.device("cpu")
+     	print("Using CPU for torch device")
+    	
     jtvae.load_state_dict(torch.load(p.model_loc, map_location=device))
     
     ## VAE encoding and decoding on the initial seeding smiles
