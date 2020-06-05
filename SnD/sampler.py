@@ -75,8 +75,6 @@ if __name__ == "__main__":
                         default = "./hyper.param")
     parser.add_argument("-o","--output", help="directory for output, default to ../SnD_designs", 
                         default = "../SnD_designs")
-    parser.add_argument("-l","--local", help="use the local precompiled rdock binary file for docking", 
-                        action = 'store_true')
     a = parser.parse_args()
     
     # Load hyper parameters
