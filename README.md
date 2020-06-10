@@ -2,7 +2,7 @@
 Molecular design framework the merges generative AI and molecular docking.
 
 ## Installation:
-Anaconda is recommended to install SampleDock. However, the general requirement is
+Anaconda is recommended to install SampleDock. However, the general requirement is listed below.
 ```
   - python=3.7
   - pytorch
