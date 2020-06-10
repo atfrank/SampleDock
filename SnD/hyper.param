@@ -9,7 +9,8 @@ ndesign = 20                                       # number of designs to be gen
 seed_smi = C1=CC=CC=C1                             # initial seeding SMILES for the first cycle, default to benzene
 
 ############### Parameters for rDock ###################
-cavity_protocol = rbcavity -was -d -r              # cmd and option for creating pocket
+cavity_protocol = rbcavity -W -d -r                # cmd and option for creating pocket 
+                                                   # -W option for rxdock precompiled bin file, -was for locally compiled rdock installation
 docking_prm = dock.prm                             # docking protocol (-p), no solvation term by default 
 npose = 100                                        # number of poses generated (-n)
 prefix = pose_docked_                              # prefix of the output files from rDock
