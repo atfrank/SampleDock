@@ -1,7 +1,0 @@
-# Parameters for the stock model #
-
-nsample = 100
-latent_size = 56  #28 for each latent vector
-depthT = 20
-depthG = 3
-hidden_size = 450
