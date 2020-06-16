@@ -1,5 +1,5 @@
 # SampleDock
-Molecular design framework the merges generative AI and molecular docking.
+Molecular design framework the merges generative AI and molecular docking. https://www.biorxiv.org/content/10.1101/2020.06.09.143289v1
 
 ## Installation:
 Anaconda is recommended to install SampleDock. However, the general requirement is listed below.
@@ -9,7 +9,7 @@ Anaconda is recommended to install SampleDock. However, the general requirement 
   - cudatoolkit (optional only for cuda enabled device)
   - scipy
   - rdkit
-  - rxdock (or locally compiled rdock)
+  - rxdock (or rdock)
 ```
 To install the required python packages with anaconda:
 ```
@@ -23,7 +23,10 @@ If you are using Anaconda, the docking simulation program, *rDock*, is by defaul
 
 To run Sample and Dock, first specify the hyperparameters at `SnD/hyper.param`. Then, `python sampler.py`
 
-## Software:
+## JTVAE Model:
+The JTVAE model is developed by Jin, W., Jaakkola, T. et al. and retireved from git: https://github.com/wengong-jin/icml18-jtnn. The default JTVAE generation model, `moses-h450z56`, is supplied with and trained with [MOSES dataset](https://github.com/molecularsets/moses).
+
+The python script for JTVAE is updated for compatiblity with python 3.7.
 
 ## Target Specific Libraries:
 SARS-CoV-2: https://github.com/atfrank/SARS-CoV-2
