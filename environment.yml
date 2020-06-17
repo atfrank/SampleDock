@@ -1,4 +1,4 @@
-name: SampleDock
+name: sampledock
 channels:
   - pytorch
   - rdkit

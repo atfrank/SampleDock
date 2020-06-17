@@ -82,9 +82,9 @@ if __name__ == "__main__":
                         default = "../SnD_designs")
     a = parser.parse_args()
     
-    if a.param is None:
-        print('A parameter file is needed! \n
-              Example can be found in: https://github.com/atfrank/SampleDock/blob/master/hyper.param')
+    if a.params is None:
+        print('A parameter file is needed! \n'+
+              'Example can be found in: https://github.com/atfrank/SampleDock/blob/master/hyper.param')
         exit()
     # Load hyper parameters
     p = hyperparam_loader(a.params)
@@ -144,6 +144,7 @@ if __name__ == "__main__":
             smi = mol.GetProp('SMILES')
             design_list = []
             try:
+                print('[INFO]: Generating new designs \t', end = '\r')
                 design_list = jtvae.smiles_gen(smi, p.ndesign)
             # go to the second best candidate if the best does not give any return
             except KeyError as err:

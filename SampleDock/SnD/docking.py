@@ -36,16 +36,15 @@ def sort_pose(dock_dir, sort_by, prefix = None):
     best_poses = []
     for mol_path in poses_mols:
         mol_in = os.path.join(dock_dir,mol_path)
-        mol_out = os.path.join(dock_dir,'sorted_'+mol_path)
-        
-        poses = Chem.SDMolSupplier(mol_in)
+
+        poses = [pose for pose in Chem.SDMolSupplier(mol_in)]
         sorted_poses = sorted(poses, key=lambda pose: float(pose.GetProp(sort_by)))
-        
+
         # retrieve the best pose mol for each design
         best_pose = sorted_poses[0]
         best_poses.append((float(best_pose.GetProp(sort_by)),best_pose.GetProp('Name'),best_pose))
     print('Docked Poses Sorted       \t', end = '\r')
-    # return the sorted tuple
+    # return the sorted tuple (ranked design based on the score of the best pose)
     return sorted(best_poses)
 
 def save_pose(poses_tuple, save_dir):
@@ -53,7 +52,7 @@ def save_pose(poses_tuple, save_dir):
     w = Chem.SDWriter(save_dir+'/ranked_designs.sd')
     f = open(save_dir+'/scores.txt','w')
     
-    for score, name, mol in sorted_poses:
+    for score, name, mol in poses_tuple:
         f.write(name+'\t'+str(score)+'\n')
         w.write(mol)
         w.flush()

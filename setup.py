@@ -8,8 +8,8 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='SampleDock',
-    version='0.3.1',
+    name='sampledock',
+    version='0.3.2',
     description='Molecular design framework the merges generative AI and molecular docking',
     author='Ziqiao Xu and Aaron Frank',
     author_email='afrankz@umich.edu',
