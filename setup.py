@@ -9,12 +9,11 @@ with open('LICENSE') as f:
 
 setup(
     name='sampledock',
-    version='0.3.2',
+    version='0.3.4',
     description='Molecular design framework the merges generative AI and molecular docking',
     author='Ziqiao Xu and Aaron Frank',
     author_email='afrankz@umich.edu',
     url='https://github.com/atfrank/SampleDock',
     license=license,
-    packages=find_packages(),
-    install_requires=['scipy',]
+    packages=find_packages()
 )
