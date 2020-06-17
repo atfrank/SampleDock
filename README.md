@@ -23,7 +23,7 @@ If you are using Anaconda, the docking simulation program, *rDock*, is by defaul
 
 To run Sample and Dock, first specify the hyperparameters at `hyper.param`. 
 
-Then, `python sampler.py -p hyper.param`
+Then, `python -m sampledock hyper.param`
 
 ## JTVAE Model:
 The JTVAE model is developed by Jin, W., Jaakkola, T. et al. and retireved from git: https://github.com/wengong-jin/icml18-jtnn. The default JTVAE generation model, `moses-h450z56`, is supplied with and trained with [MOSES dataset](https://github.com/molecularsets/moses).
