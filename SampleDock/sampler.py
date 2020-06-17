@@ -77,12 +77,15 @@ def smiles_to_sdfile(smiles_list, dsgn_dir):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p","--params", help="parameter file for SnD", 
-                        default = "./hyper.param")
+    parser.add_argument("-p","--params", help="parameter file for SnD")
     parser.add_argument("-o","--output", help="directory for output, default to ../SnD_designs", 
                         default = "../SnD_designs")
     a = parser.parse_args()
     
+    if a.param is None:
+        print('A parameter file is needed! \n
+              Example can be found in: https://github.com/atfrank/SampleDock/blob/master/hyper.param')
+        exit()
     # Load hyper parameters
     p = hyperparam_loader(a.params)
     
@@ -133,7 +136,7 @@ if __name__ == "__main__":
 
         ## Generate docking scores from .sd files
         dock(ligs, docking_dir, prmfile, p.docking_prm, p.npose, p.prefix)
-        ranked_poses = sort_pose(docking_dir, p.sort_by, p.prefix)
+        ranked_poses = sort_pose(docking_dir, p.sort_by, p.prefix) 
         save_pose(ranked_poses, design_dir)
 
         ## Generate new design list

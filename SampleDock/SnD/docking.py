@@ -22,7 +22,7 @@ def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
     print('Docking Complete!  \t', end = '\r')
 
 def sort_pose(dock_dir, sort_by, prefix = None):
-    # list all pose_org.sd files
+    # list all pose_docked.sd files
     if type(prefix) == str:
         poses_mols = [x for x in os.listdir(dock_dir) 
                       if x.endswith('.sd') and x.startswith(prefix)]
@@ -37,16 +37,18 @@ def sort_pose(dock_dir, sort_by, prefix = None):
     for mol_path in poses_mols:
         mol_in = os.path.join(dock_dir,mol_path)
         mol_out = os.path.join(dock_dir,'sorted_'+mol_path)
-        cmdline = "sdsort -n -f'%s' %s > %s"%(sort_by, mol_in, mol_out)
-        proc = subprocess.Popen(cmdline, shell=True)
-        proc.wait()
+        
+        poses = Chem.SDMolSupplier(mol_in)
+        sorted_poses = sorted(poses, key=lambda pose: float(pose.GetProp(sort_by)))
+        
         # retrieve the best pose mol for each design
-        best_pose = Chem.SDMolSupplier(mol_out)[0]
+        best_pose = sorted_poses[0]
         best_poses.append((float(best_pose.GetProp(sort_by)),best_pose.GetProp('Name'),best_pose))
     print('Docked Poses Sorted       \t', end = '\r')
+    # return the sorted tuple
     return sorted(best_poses)
 
-def save_pose(sorted_poses, save_dir):
+def save_pose(poses_tuple, save_dir):
     # sort and save the best pose and score for each design
     w = Chem.SDWriter(save_dir+'/ranked_designs.sd')
     f = open(save_dir+'/scores.txt','w')
