@@ -9,6 +9,6 @@ dependencies:
   - python=3.7
   - pytorch
   - cudatoolkit
-  - rdkit
+  - rdkit>=2020.03.3.0
   - scipy
   - rxdock
