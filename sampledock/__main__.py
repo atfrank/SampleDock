@@ -14,6 +14,7 @@ if a.params is None:
     
 import torch
 import os
+import sys
 import subprocess
 
 from rdkit import rdBase
@@ -83,6 +84,7 @@ for j in range(p.ncycle):
         design_list = []
         try:
             print('[INFO]: Generating new designs \t', end = '\r')
+            sys.stdout.flush()
             design_list = jtvae.smiles_gen(smi, p.ndesign)
         # go to the second best candidate if the best does not give any return
         except KeyError as err:

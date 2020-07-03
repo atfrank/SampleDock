@@ -1,5 +1,6 @@
 # Prepare pocket_docking.prm file for rDock
 import subprocess
+import sys
 import os
 
 def mk_dir(parent='.',target='NewTarget'):
@@ -45,6 +46,7 @@ def wrt_prm(parameter,filename='pocket_docking.prm'):
         f.writelines(line for line in parameter)
     f.close()
     print('\nDocking Parameters File Saved at: \n'+filename+'\n')
+    sys.stdout.flush()
     
 def prep_prm(receptor,ligand,recep_name,target_dir):
     

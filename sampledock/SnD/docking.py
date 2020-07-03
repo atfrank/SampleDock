@@ -2,11 +2,13 @@
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import os
+import sys
 import subprocess
 
 def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
     # ligs must be a list of file path
     print('Docking in Progress\t', end = '\r')
+    sys.stdout.flush()
     procs = []
     for i,lig in enumerate(ligs):
         output = os.path.join(dock_dir,prefix+str(i))
@@ -20,6 +22,7 @@ def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
         # makes sure the docking has completed before sorting the score
         proc.wait()
     print('Docking Complete!  \t', end = '\r')
+    sys.stdout.flush()
 
 def sort_pose(dock_dir, sort_by, prefix = None):
     # list all pose_docked.sd files
@@ -44,6 +47,7 @@ def sort_pose(dock_dir, sort_by, prefix = None):
         best_pose = sorted_poses[0]
         best_poses.append((float(best_pose.GetProp(sort_by)),best_pose.GetProp('Name'),best_pose))
     print('Docked Poses Sorted       \t', end = '\r')
+    sys.stdout.flush()
     # return the sorted tuple (ranked design based on the score of the best pose)
     return sorted(best_poses)
 

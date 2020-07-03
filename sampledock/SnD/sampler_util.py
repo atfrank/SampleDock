@@ -36,6 +36,7 @@ class hyperparam_loader(object):
         FILE.close()
         print('\n'+'#'*50+'\n')
         self.vocab = [x.strip("\r\n ") for x in open(self.vocab_loc)]
+        sys.stdout.flush()
         
 def create_wd(parent_dir,target_name):
     
@@ -50,6 +51,7 @@ def create_wd(parent_dir,target_name):
     directory = os.path.abspath(directory)
     os.makedirs(directory)
     print("\nNew Directory Made:"+directory)
+    sys.stdout.flush()
     return directory
 
 def smiles_to_sdfile(smiles_list, dsgn_dir):
