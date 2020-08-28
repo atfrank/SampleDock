@@ -1,9 +1,9 @@
-## All relative path anchors on the location of working directory not this file
+## All relative path starts from the location of working directory not this file
 
 ############### Parameters for SnD #####################
-receptor_name = CDK2-5IEV                          # name the receptor to create dir
-receptor_file = ../targets/CDK2_5IEV/5IEV.mol2     # must be mol2 format
-ligand_file = ../targets/CDK2_5IEV/Roniciclib.sd   # must be sd format
+receptor_name = nCoV_6LU7                          # name the receptor to create dir
+receptor_file = ./targets/nCoV_6LU7/6LU7.mol2      # must be mol2 format
+ligand_file = ./targets/nCoV_6LU7/N3.sdf           # must be sd format
 ncycle = 1000                                      # number of cycles to be run
 ndesign = 20                                       # number of designs to be generated per cycle
 seed_smi = C1=CC=CC=C1                             # initial seeding SMILES for the first cycle, default to benzene
