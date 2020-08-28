@@ -8,7 +8,6 @@ channels:
 dependencies:
   - python=3.7
   - pytorch
-  - cudatoolkit
   - rdkit>=2020.03.3.0
   - scipy
   - rxdock
