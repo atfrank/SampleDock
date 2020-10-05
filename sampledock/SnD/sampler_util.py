@@ -18,14 +18,14 @@ class hyperparam_loader(object):
         FILE = open(filename)
         print('\n'+'#'*11+' Parameters Loaded as Below '+'#'*11+'\n')
         for i, line in enumerate(FILE):
-            if line.strip('\r\n ').startswith("#") or line.isspace(): pass
+            if line.strip().startswith("#") or line.isspace(): pass
             else: 
                 try:
                     if "#" in line: 
                         line = line.split("#",1)[0]
                     name, value = line.split("=",1)
-                    name = name.strip("\r\n ")
-                    value = value.strip("\r\n ")
+                    name = name.strip()
+                    value = value.strip()
                     if value.isdigit(): value = int(value)
                     setattr(self,name,value)
                     print(name,":",value)
