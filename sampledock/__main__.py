@@ -25,6 +25,7 @@ from .jtvae import Vocab, JTNNVAE
 from .SnD import prep_prm
 from .SnD import dock, sort_pose, save_pose
 from .SnD import hyperparam_loader, create_wd, smiles_to_sdfile
+from .SnD import combine_designs, mkdf
 
 # Load hyper parameters
 p = hyperparam_loader(a.params)
@@ -98,4 +99,13 @@ for j in range(p.ncycle):
             print('Current design (%s) has no offspring; trying the next one \r'%name)
 
     print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)
+
+print("\n", p.ncycle, "cycles of design finished. Starting post-processing.")
+# Create post-process working directory
+postproc_wd = os.path.join(wd, "All_Designs_Processed")
+os.makedirs(postproc_wd)
+# Extract all ranked designs from ejach cycle and combine in one sdf file
+allmols, bestmols = combine_designs(wd, postproc_wd)
+# Create pandas dataframe for summary
+mkdf(allmols, bestmols, postproc_wd)
 
