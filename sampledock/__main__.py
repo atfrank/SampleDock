@@ -100,11 +100,12 @@ for j in range(p.ncycle):
 
     print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)
 
+print("\n", p.ncycle, "cycles of design finished. Starting post-processing.")
 # Create post-process working directory
 postproc_wd = os.path.join(wd, "All_Designs_Processed")
 os.makedirs(postproc_wd)
 # Extract all ranked designs from ejach cycle and combine in one sdf file
-combine_designs(wd, postproc_wd)
+allmols, bestmols = combine_designs(wd, postproc_wd)
 # Create pandas dataframe for summary
-mkdf(wd, postproc_wd)
+mkdf(allmols, bestmols, postproc_wd)
 
