@@ -23,16 +23,16 @@ def process_by_folder(fd, inpath):
     sd = inpath+'/'+fd+'/ranked_designs.sd'
     if os.path.exists(sd):
         cir_mols = [PropertyMol(m) for m in Chem.SDMolSupplier(sd)]
-        for i,m in enumerate(cir_mols):
+        for m in cir_mols:
             # Calculate properties for each mol
             m.SetProp('Cycle',cycle)
             m.SetProp('MolWeight', str(MolWt(m)))
             m.SetProp('LogP', str(LogP(m)))
             m.SetProp('QED', str(QED(m)))
             m.SetProp('SAS', str(SAS(m)))
-            if i == 0: 
-                # Select the highest score design in the cycle
-                best_mol = m
+        # Select the highest score design in the cycle
+        # (the first one in the ranked sd file)
+        best_mol = cir_mols[0]
     return cir_mols, best_mol
 
 # calculated mol properties from each cycle and combine mols in one sdf file
@@ -79,20 +79,25 @@ def combine_designs(inpath, outpath):
 
     return all_mols, best_mols
 
-# Create dataframe with all the properties
 def create_df(mol_list):
+    # Create a dataframe with all these mol properties
+    # These props should exist if the designs are post-processed by funtions above 
+    mol_props = ['Name','Cycle','SCORE.INTER','SMILES','LogP','QED','MolWeight','SAS']
     df = pd.DataFrame()
 
-    df['Design'] = [m.GetProp('Name') for m in mol_list]
-    df['Cycle'] = [int(m.GetProp('Cycle')) for m in mol_list]
-    df['Score'] = [float(m.GetProp('SCORE.INTER')) for m in mol_list]
-    df['SMILES'] = [m.GetProp('SMILES') for m in mol_list]
-    df['Mol'] = [m for m in mol_list]
-    df['LogP'] = [float(m.GetProp('LogP')) for m in mol_list]
-    df['QED'] = [float(m.GetProp('QED')) for m in mol_list]
-    df['MolWt'] = [float(m.GetProp('MolWeight')) for m in mol_list]
-    df['SAS'] = [float(m.GetProp('SAS')) for m in mol_list]
+    # Fill df with lists 
+    # (append by entry using dicts from each mol increases data overhead and is slow)
+    for prop in mol_props:
+        df[prop] = [m.GetProp(prop) for m in mol_list]
+        # Convert strings to possible numeric dtypes
+        try:
+            inferred_type = pd.to_numeric(df[prop]).dtype
+            df[prop] = df[prop].astype(inferred_type)
+        except ValueError:
+            pass
 
+    # Add mol objects to the last column
+    df['Mol'] = mol_list
     return df
 
 def mkdf(all_mols, best_mols, outpath):
@@ -101,7 +106,7 @@ def mkdf(all_mols, best_mols, outpath):
     minscores = create_df(best_mols)
 
     # sort the dataframe based on docking scores
-    sortedscores = minscores.sort_values('Score')
+    sortedscores = minscores.sort_values('SCORE.INTER')
     # Drop dulicated entries
     sortedscores.drop_duplicates('SMILES', inplace = True, keep = 'first')
 

@@ -39,7 +39,7 @@ if torch.cuda.is_available():
     print('Using CUDA device:',torch.cuda.get_device_name(torch.cuda.current_device()))
 else:
     device = torch.device("cpu")
-    print("Using CPU for torch device")
+    print("CUDA device not available. Using CPU for torch device.")
 
 jtvae.load_state_dict(torch.load(p.model_loc, map_location=device))
 
