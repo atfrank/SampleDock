@@ -88,8 +88,8 @@ for j in range(p.ncycle):
             sys.stdout.flush()
             design_list = jtvae.smiles_gen(smi, p.ndesign)
         # go to the second best candidate if the best does not give any return
-        except KeyError as err:
-            print('[KeyError]',err,'is not part of the vocabulary')
+        except KeyError as key:
+            print('[KeyError]',key,'is not part of the vocabulary')
             continue
 
         if len(design_list) != 0: 

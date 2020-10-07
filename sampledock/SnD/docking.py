@@ -19,7 +19,7 @@ def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
         procs.append(proc)
 
     for proc in procs:
-        # makes sure the docking has completed before sorting the score
+        # makes sure the docking has completed before this function ends
         proc.wait()
     print('[INFO]: Docking Complete!  \t', end = '\r')
     sys.stdout.flush()
