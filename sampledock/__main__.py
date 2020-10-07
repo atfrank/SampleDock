@@ -39,7 +39,7 @@ if torch.cuda.is_available():
     print('Using CUDA device:',torch.cuda.get_device_name(torch.cuda.current_device()))
 else:
     device = torch.device("cpu")
-    print("CUDA device not available. Using CPU for torch device.")
+    print("CUDA device not detected. Using CPU for torch device.")
 
 jtvae.load_state_dict(torch.load(p.model_loc, map_location=device))
 
@@ -104,7 +104,7 @@ print("\n", p.ncycle, "cycles of design finished. Starting post-processing.")
 # Create post-process working directory
 postproc_wd = os.path.join(wd, "All_Designs_Processed")
 os.makedirs(postproc_wd)
-# Extract all ranked designs from ejach cycle and combine in one sdf file
+# Extract all ranked designs from each cycle and combine in one sdf file
 allmols, bestmols = combine_designs(wd, postproc_wd)
 # Create pandas dataframe for summary
 mkdf(allmols, bestmols, postproc_wd)
