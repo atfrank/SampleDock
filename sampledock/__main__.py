@@ -1,17 +1,13 @@
 import argparse
 
-parser = argparse.ArgumentParser(prog='Sample-n-Dock')
+parser = argparse.ArgumentParser(prog='sampledock')
 parser.add_argument("params",metavar = 'P', type=str, 
-                    help="parameter file for Sample-n-Dock")
+                    help="parameter file for SampleDock. For a parameter file template, please see \
+                        https://raw.githubusercontent.com/atfrank/SampleDock/master/hyper.param")
 parser.add_argument("-o","--output", help="directory for output, default to ../SnD_designs", 
                     default = "../SnD_designs")
 a = parser.parse_args()
 
-if a.params is None:
-    print('A parameter file is needed! \n'+
-          'Example can be found in: https://github.com/atfrank/SampleDock/blob/master/hyper.param')
-    exit()
-    
 import torch
 import os
 import sys
