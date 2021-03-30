@@ -1,6 +1,6 @@
 End-User License Agreement
 
-PROGRAM: - RNAPosers: Machine Learning Classifiers For RNA Containing Complexes
+PROGRAM: - SampleDock: Molecular design framework the merges generative AI and molecular docking
 
  IMPORTANT – READ CAREFULLY: This Agreement is a legal agreement between
  “LICENSEE” (defined below) and The Regents of The University of
@@ -11,7 +11,7 @@ BACKGROUND
 
 1.   Faculty at the University of Michigan’s Department of Biophysics
 have developed a proprietary software application and related
-documentation, referred to as “RNAPosers”, for use by trained individuals
+documentation, referred to as “SampleDock”, for use by trained individuals
 in Computational Biophysics and related analysis (hereinafter referred to as
 "PROGRAM"); and
 
@@ -129,7 +129,7 @@ problems with Licensed Program. The Developers and MICHIGAN are
 permitted to use any information LICENSE provide in making changes to
 the PROGRAM. Such reports shall be sent to:
 
-Project RNAPoser
+Project SampleDock
 
 The University of Michigan
 
