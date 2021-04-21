@@ -6,29 +6,18 @@
 # NON-COMMERCIAL LICENSE: https://github.com/atfrank/SampleDock/blob/master/LICENSE_NON-COMMERICAL
 # Frank Lab 2020-2021
 
+import os
 import pickle
 import tmap as tm
 from mhfp.encoder import MHFPEncoder
 from faerun import Faerun
 from matplotlib import pyplot as plt
 import pandas as pd
+from .post_process import df_from_molProps
 
 from tqdm.contrib.concurrent import process_map
-
-def df_from_molProps(mols):
-    # declare a named tuple
-    Prop = namedtuple('Prop',['SMILES','Score','MolWeight','LogP','QED','SAS'])
-    props = [(mol.GetProp('SMILES'),
-              float(mol.GetProp('SCORE.INTER')),
-              float(mol.GetProp('MolWeight')),
-              float(mol.GetProp('LogP')),
-              float(mol.GetProp('QED')),
-              float(mol.GetProp('SAS'))) for mol in mols]
-    # Make it a named tuple
-    props = [Prop._make(p) for p in props]
-    return pd.DataFrame(props)
         
-def LSH_Convert(mols, num_workers):
+def LSH_Convert(mols, outpath, num_workers):
     # MinHash fingerprints (mhfp) encoder for molecular fingerprinting
     enc = MHFPEncoder(1024)
     # Locality Sensitive Hashing Forest Instance
@@ -68,7 +57,7 @@ def tree_coords(lf, node_size = 1/20, k = 20, mmm_rps = 2):
     x, y, s, t, _ = tm.layout_from_lsh_forest(lf, cfg)
     return list(x), list(y), list(s), list(t)
 
-def df_to_faerun(df):
+def df_to_faerun(df,x,y,s,t):
     print('Making Faerun plot')
     f = Faerun(view="front", coords=False)
     f.add_scatter(
@@ -105,8 +94,8 @@ def df_to_faerun(df):
         )
     # The first character of the name has to be a letter!
     f.add_tree("SnD_Tree", {"from": s, "to": t}, point_helper="SampleDock")
-    
     print('Plotting finished')
+    return f
     
 if __name__ == '__main__':
     import argparse
