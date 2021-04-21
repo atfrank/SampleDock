@@ -94,6 +94,8 @@ def df_to_faerun(df,x,y,s,t):
         )
     # The first character of the name has to be a letter!
     f.add_tree("SnD_Tree", {"from": s, "to": t}, point_helper="SampleDock")
+    f.plot("SampleDock"+'_space', # name of the .html file
+       template="smiles")
     print('Plotting finished')
     return f
     
