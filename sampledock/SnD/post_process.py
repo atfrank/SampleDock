@@ -11,6 +11,7 @@ from rdkit.Chem import AllChem, Draw
 import os
 from multiprocessing import Pool
 from itertools import repeat
+from collections import namedtuple
 
 from rdkit.Chem.PropertyMol import PropertyMol # Allow pickle on mol props for multiprocessing
 from rdkit.Chem import RDConfig # Allow Contrib packages to be used
@@ -84,31 +85,32 @@ def combine_designs(inpath, outpath):
 
     return all_mols, best_mols
 
-def create_df(mol_list):
-    # Create a dataframe with all these mol properties
-    # These props should exist if the designs are post-processed by funtions above 
-    mol_props = ['Name','Cycle','Score','SMILES','LogP','QED','MolWeight','SAS']
-    df = pd.DataFrame()
-
-    # Fill df with lists 
-    # (append by entry using dicts from each mol increases data overhead and is slow)
-    for prop in mol_props:
-        df[prop] = [m.GetProp(prop) for m in mol_list]
-        # Convert strings to possible numeric dtypes
-        try:
-            inferred_type = pd.to_numeric(df[prop]).dtype
-            df[prop] = df[prop].astype(inferred_type)
-        except ValueError:
-            pass
-    return df
+def df_from_molProps(mol_list):
+    # declare a named tuple
+    Prop = namedtuple('Prop',['Name','Cycle','Score','SMILES','LogP','QED','MolWeight','SAS'])
+    props = [
+              (
+                  mol.GetProp('Name'),
+                  int(mol.GetProp('Cycle')),
+                  ## The score option is hard coded for now, will change everything to OOP later
+                  float(mol.GetProp('SCORE.INTER')),
+                  mol.GetProp('SMILES'),
+                  float(mol.GetProp('LogP')),
+                  float(mol.GetProp('QED')),
+                  float(mol.GetProp('MolWeight')),
+                  float(mol.GetProp('SAS'))
+              ) for mol in mol_list]
+    # Make it a named tuple
+    props = [Prop._make(p) for p in props]
+    return pd.DataFrame(props)
 
 def mkdf(all_mols, best_mols, outpath):
     # Create dataframe from the lists
-    allscores = create_df(all_mols)
-    minscores = create_df(best_mols)
+    allscores = df_from_molProps(all_mols)
+    minscores = df_from_molProps(best_mols)
 
     # sort the dataframe based on docking scores
-    sortedscores = minscores.sort_values('SCORE.INTER')
+    sortedscores = minscores.sort_values('Score')
     # Drop dulicated entries
     sortedscores.drop_duplicates('SMILES', inplace = True, keep = 'first')
 

@@ -12,7 +12,7 @@ import torch
 import os
 import sys
 import subprocess
-
+import pickle
 from rdkit import rdBase
 ## Disable rdkit Logs
 rdBase.DisableLog('rdApp.error')
@@ -105,14 +105,18 @@ allmols, bestmols = combine_designs(wd, postproc_wd)
 # Create pandas dataframe for summary
 allscores, _ = mkdf(allmols, bestmols, postproc_wd)
 # Make LSH Forest 
-lf = LSH_Convert(allmols, outpath)
+lf = LSH_Convert(allmols, postproc_wd, num_workers = os.cpu_count()-1)
 # Get LSH Tree Coords
-x, y, s, t = tree_coords(lf)
-allscores['x'] = x
-allscores['y'] = y
-allscores['s'] = s
-allscores['t'] = t
-# Save dataframe again
-allscores.to_csv(os.path.join(postproc_wd,"allscores.csv"),index = False)
+x, y, s, t = tree_coords(lf, 
+                         node_size = float(eval(p.node_size)), 
+                         k = int(p.k), 
+                         mmm_rps = int(p.mmm_repeats))
+
+# Save coords
+with open(os.path.join(postproc_wd,"coords.pickle"),'wb') as f:
+    pickle.dump((x,y,s,t),f)
 # Create tmap on faerun
-df_to_faerun(allscores)
+f = df_to_faerun(allscores,x,y,s,t)
+
+with open(os.path.join(postproc_wd,'SampleDock.faerun'), 'wb') as handle:
+    pickle.dump(f.create_python_data(), handle, protocol=pickle.HIGHEST_PROTOCOL)

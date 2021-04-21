@@ -1,13 +1,19 @@
 name: sampledock
 channels:
   - pytorch
-  - rdkit
   - conda-forge
   - bioconda
-
+  - tmap
+  - pip
+  - pip:
+      - faerun
+      - mhfp
+      
 dependencies:
-  - python=3.7
+  - python>=3.7
   - pytorch
   - rdkit>=2020.03.3.0
   - scipy
   - rxdock
+  - tmap
+  - tqdm
