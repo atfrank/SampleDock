@@ -1,4 +1,10 @@
-# Python wrapper for rDock tools
+# Python wrapper for rDock tools. Uses rDock CLI
+# This is part of SampleDock package
+#
+# COMMERCIAL LICENSE: https://github.com/atfrank/SampleDock/blob/master/LICENSE_COMMERICAL
+# NON-COMMERCIAL LICENSE: https://github.com/atfrank/SampleDock/blob/master/LICENSE_NON-COMMERICAL
+# Frank Lab 2020-2021
+
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import os
@@ -70,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument("-i","--input", help="directory that contains prepared .sd files")
     parser.add_argument("-o","--output", help="directory for output, default to ./test", 
                         default = "./test")
-    parser.add_argument("-r","--prm", help="path to pocket .prm file")
+    parser.add_argument("-r","--prm", help="path to pocket.prm file")
     parser.add_argument("-n","--npose", help="number of poses for docking, default to 100",
                         default = 100)
     parser.add_argument("-s","--sort", help="filter for sdsort, default to SCORE.INTER",

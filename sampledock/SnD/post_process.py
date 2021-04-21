@@ -1,4 +1,9 @@
 # Post processing script for sample and dock generated molecules
+# This is part of SampleDock package
+#
+# COMMERCIAL LICENSE: https://github.com/atfrank/SampleDock/blob/master/LICENSE_COMMERICAL
+# NON-COMMERCIAL LICENSE: https://github.com/atfrank/SampleDock/blob/master/LICENSE_NON-COMMERICAL
+# Frank Lab 2020-2021
 
 import pandas as pd
 from rdkit import Chem
@@ -48,7 +53,7 @@ def combine_designs(inpath, outpath):
     # Multiprocessing
     with Pool(processes = os.cpu_count()-1) as pool:
         results = pool.starmap(process_by_folder, zip(folders, repeat(inpath)))
-
+        
     # Retrieve results
     mol_lists, best_mols = zip(*results)
     # Create the list of all mols
@@ -82,7 +87,7 @@ def combine_designs(inpath, outpath):
 def create_df(mol_list):
     # Create a dataframe with all these mol properties
     # These props should exist if the designs are post-processed by funtions above 
-    mol_props = ['Name','Cycle','SCORE.INTER','SMILES','LogP','QED','MolWeight','SAS']
+    mol_props = ['Name','Cycle','Score','SMILES','LogP','QED','MolWeight','SAS']
     df = pd.DataFrame()
 
     # Fill df with lists 
@@ -95,9 +100,6 @@ def create_df(mol_list):
             df[prop] = df[prop].astype(inferred_type)
         except ValueError:
             pass
-
-    # Add mol objects to the last column
-    df['Mol'] = mol_list
     return df
 
 def mkdf(all_mols, best_mols, outpath):
@@ -111,8 +113,8 @@ def mkdf(all_mols, best_mols, outpath):
     sortedscores.drop_duplicates('SMILES', inplace = True, keep = 'first')
 
     # Save as csv
-    allscores.drop(columns=['Mol']).to_csv(outpath+'/allscores.csv', index = False)
-    sortedscores.drop(columns=['Mol']).to_csv(outpath+'/sortedscores.csv', index = False)
+    allscores.to_csv(outpath+'/allscores.csv', index = False)
+    sortedscores.to_csv(outpath+'/sortedscores.csv', index = False)
     print('Dataframes saved!')
     sys.stdout.flush()
     return allscores, minscores

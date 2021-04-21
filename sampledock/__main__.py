@@ -22,7 +22,7 @@ from .SnD import prep_prm
 from .SnD import dock, sort_pose, save_pose
 from .SnD import hyperparam_loader, create_wd, smiles_to_sdfile
 from .SnD import combine_designs, mkdf
-
+from .SnD import LSH_Convert, tree_coords, df_to_faerun
 # Load hyper parameters
 p = hyperparam_loader(a.params)
 
@@ -103,5 +103,16 @@ os.makedirs(postproc_wd)
 # Extract all ranked designs from each cycle and combine in one sdf file
 allmols, bestmols = combine_designs(wd, postproc_wd)
 # Create pandas dataframe for summary
-mkdf(allmols, bestmols, postproc_wd)
-
+allscores, _ = mkdf(allmols, bestmols, postproc_wd)
+# Make LSH Forest 
+lf = LSH_Convert(allmols, outpath)
+# Get LSH Tree Coords
+x, y, s, t = tree_coords(lf)
+allscores['x'] = x
+allscores['y'] = y
+allscores['s'] = s
+allscores['t'] = t
+# Save dataframe again
+allscores.to_csv(os.path.join(postproc_wd,"allscores.csv"),index = False)
+# Create tmap on faerun
+df_to_faerun(allscores)

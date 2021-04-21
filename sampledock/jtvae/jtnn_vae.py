@@ -31,7 +31,9 @@ class JTNNVAE(nn.Module):
 
         self.A_assm = nn.Linear(latent_size, hidden_size, bias=False)
         self.assm_loss = nn.CrossEntropyLoss(reduction='sum')
-
+        
+        ## nn.Linear: Applies a linear transformation to the incoming data (y = xA^T + b)
+        ## Not sure how the biases and weights are specified this way
         self.T_mean = nn.Linear(hidden_size, latent_size)
         self.T_var = nn.Linear(hidden_size, latent_size)
         self.G_mean = nn.Linear(hidden_size, latent_size)
@@ -47,7 +49,8 @@ class JTNNVAE(nn.Module):
         _, jtenc_holder, mpn_holder = tensorize(tree_batch, self.vocab, assm=False)
         tree_vecs, _, mol_vecs = self.encode(jtenc_holder, mpn_holder)
         return torch.cat([tree_vecs, mol_vecs], dim=-1)
-
+    
+    ## Onehot encoding for a single smiles
     ## Added by Truman for smiles_gen()
     def encode_single_smiles(self, smiles):
         tree_batch = [MolTree(smiles)]
