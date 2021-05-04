@@ -1,0 +1,3 @@
+[submodule "faerun-python"]
+	path = faerun-python
+	url = git@github.com:Truman-Xu/faerun-python.git

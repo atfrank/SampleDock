@@ -62,8 +62,8 @@ def df_to_faerun(df,x,y,s,t):
     f = Faerun(view="front", coords=False)
     f.add_scatter(
         # No space in the string allowed for the name, use underscore!!
-        # Cannot start with a number, it has to be a letter!! Weird Bug!!
-        # My guess is that the string is to be converted to a variable name, 
+        # Cannot start with a number, it has to be a letter!!
+        # the string is to be converted to a variable name, 
         # therefore it has to be compatible with python variable naming scheme
         "SampleDock",
         {
@@ -94,8 +94,6 @@ def df_to_faerun(df,x,y,s,t):
         )
     # The first character of the name has to be a letter!
     f.add_tree("SnD_Tree", {"from": s, "to": t}, point_helper="SampleDock")
-    f.plot("SampleDock"+'_space', # name of the .html file
-       template="smiles")
     print('Plotting finished')
     return f
     
@@ -126,4 +124,6 @@ if __name__ == '__main__':
     df['s'] = s
     df['t'] = t
     df.to_csv(os.path.join(outpath,"props.csv"),index = False)
-    df_to_faerun(df)
+    f = df_to_faerun(df)
+    f.plot(os.path.join(outpath,"SampleDock"+'_space'), # name of the .html file
+       template="smiles")

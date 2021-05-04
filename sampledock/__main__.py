@@ -13,7 +13,7 @@ import os
 import sys
 import subprocess
 import pickle
-from rdkit import rdBase
+from rdkit import rdBase, Chem
 ## Disable rdkit Logs
 rdBase.DisableLog('rdApp.error')
 from .jtvae import Vocab, JTNNVAE
@@ -74,27 +74,35 @@ for j in range(p.ncycle):
     dock(ligs, docking_dir, prmfile, p.docking_prm, p.npose, p.prefix)
     ranked_poses = sort_pose(docking_dir, p.sort_by, p.prefix) 
     save_pose(ranked_poses, design_dir)
-
+    
     ## Generate new design list
-    for energy, name, mol in ranked_poses:
-        smi = mol.GetProp('SMILES')
-        design_list = []
-        try:
-            print('[INFO]: Generating new designs \t', end = '\r')
-            sys.stdout.flush()
-            design_list = jtvae.smiles_gen(smi, p.ndesign)
-        # go to the second best candidate if the best does not give any return
-        except KeyError as key:
-            print('[KeyError]',key,'is not part of the vocabulary')
-            continue
+    if p.ensemble > 1:
+        top_smi_list = [Chem.MolToSmiles(mol) for _, _, mol in ranked_poses[:p.ensemble]]
+        smi = jtvae.find_ensemble(top_smi_list)
+        design_list = jtvae.smiles_gen(smi, p.ndesign)
+        best_score = ranked_poses[0][0]
+        print("[INFO]: Cycle %s: %s  Best Score: %s kcal/mol"%(j, smi, best_score)+'\t'*6)
+    else:
+        for energy, name, mol in ranked_poses:
+            smi = mol.GetProp('SMILES')
+            try:
+                print('[INFO]: Generating new designs \t', end = '\r')
+                sys.stdout.flush()
+                # get new design list for the nex cycle
+                design_list = jtvae.smiles_gen(smi, p.ndesign)
+            # This is due to difference in parsing of SMILES (especially rings)
+            ## TODO: Convert sampledock to OOP structure and use the vectors directly
+            except KeyError as key:
+                print('[KeyError]',key,'is not part of the vocabulary (the model was not trained with this scaffold)')
+                continue
+            # if there are offspring designs, break the loop
+            if len(design_list) != 0: 
+                break 
+            # go to the next candidate if the current one does not give any return
+            else: 
+                print('Current design (%s) has no offspring; trying the next one \r'%name)
 
-        if len(design_list) != 0: 
-            break 
-
-        else: 
-            print('Current design (%s) has no offspring; trying the next one \r'%name)
-
-    print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)
+        print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)
 
 print("\n", p.ncycle, "cycles of design finished. Starting post-processing.")
 # Create post-process working directory
@@ -117,6 +125,7 @@ with open(os.path.join(postproc_wd,"coords.pickle"),'wb') as f:
     pickle.dump((x,y,s,t),f)
 # Create tmap on faerun
 f = df_to_faerun(allscores,x,y,s,t)
-
+f.plot("SampleDock"+'_space', path = postproc_wd, # name and path of the .html file
+       template="smiles")
 with open(os.path.join(postproc_wd,'SampleDock.faerun'), 'wb') as handle:
     pickle.dump(f.create_python_data(), handle, protocol=pickle.HIGHEST_PROTOCOL)

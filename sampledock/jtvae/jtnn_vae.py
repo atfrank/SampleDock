@@ -71,7 +71,7 @@ class JTNNVAE(nn.Module):
         ## Convert smiles to one-hot encoding (altered function from original code)
         x_tree, x_mol = self.encode_single_smiles(smiles)
         
-        ## Encode one-hots to z-mean and log var. Following Mueller et al.
+        ## Encode one-hots to z-mean and log variance. Following Mueller et al.
         tree_mean = self.T_mean(x_tree)
         tree_log_var = -torch.abs(self.T_var(x_tree)) 
         mol_mean = self.G_mean(x_mol)
@@ -89,6 +89,32 @@ class JTNNVAE(nn.Module):
                 smiles_list.append(smilesout)    
         return smiles_list
     
+    def find_ensemble(self,smiles_list):
+        z_tree = []
+        z_mol = []
+        for smi in smiles_list:
+            try:
+                x_tree, x_mol = self.encode_single_smiles(smi)
+            # This is due to difference in parsing of SMILES (especially rings)
+            ## TODO: Convert sampledock to OOP structure and use the vectors directly
+            except KeyError as key:
+                print('[KeyError]',key,'is not part of the vocabulary (the model was not trained with this scaffold)')
+                continue
+            tree_mean = self.T_mean(x_tree)
+            tree_log_var = -torch.abs(self.T_var(x_tree)) 
+            mol_mean = self.G_mean(x_mol)
+            mol_log_var = -torch.abs(self.G_var(x_mol))
+            
+            z_tree.append(self.z_vec(tree_mean, tree_log_var))
+            z_mol.append(self.z_vec(mol_mean, mol_log_var))
+        
+        z_tree = torch.cat(z_tree)
+        z_mol = torch.cat(z_mol)
+        
+        return self.decode(z_tree.mean(0).reshape((1,self.latent_size)),
+                            z_mol.mean(0).reshape((1,self.latent_size)),
+                            False)
+        
     def encode_latent(self, jtenc_holder, mpn_holder):
         tree_vecs, _ = self.jtnn(*jtenc_holder)
         mol_vecs = self.mpn(*mpn_holder)
