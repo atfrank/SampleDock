@@ -4,10 +4,6 @@ channels:
   - conda-forge
   - bioconda
   - tmap
-  - pip
-  - pip:
-      - faerun
-      - mhfp
       
 dependencies:
   - python>=3.7
@@ -17,3 +13,7 @@ dependencies:
   - rxdock
   - tmap
   - tqdm
+  - pip
+  - pip:
+    - faerun
+    - mhfp
