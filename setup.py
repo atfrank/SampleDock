@@ -9,11 +9,15 @@ with open('LICENSE_NON-COMMERICAL') as f:
 
 setup(
     name='sampledock',
-    version='0.3.4',
+    version='0.4',
     description='Molecular design framework the merges generative AI and molecular docking',
     author='Ziqiao Xu and Aaron Frank',
     author_email='afrankz@umich.edu',
     url='https://github.com/atfrank/SampleDock',
     license=license,
     packages=find_packages()
+    package_data={
+        # Include hyper.param as default parameter file:
+        "hyperparameter": ["hyper.param"],
+    }
 )

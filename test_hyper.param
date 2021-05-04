@@ -6,6 +6,8 @@ receptor_file = ./targets/CDK2_5IEV/5IEV.mol2      # must be mol2 format
 ligand_file = ./targets/CDK2_5IEV/Roniciclib.sd    # must be sd format
 ncycle = 2                                         # number of cycles to be run
 ndesign = 10                                       # number of designs to be generated per cycle
+ensemble = 5                                       # top of number of design to generate the average structure 
+                                                   # (1 being just the top scoring structure)
 seed_smi = C1=CC=CC=C1                             # initial seeding SMILES for the first cycle, default to benzene
 
 ############### Parameters for rDock ###################
