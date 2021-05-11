@@ -1,3 +1,4 @@
+## TODO: this will definitely need to be restructured as the additional features have cluterred code.
 import argparse
 
 parser = argparse.ArgumentParser(prog='sampledock')
@@ -21,6 +22,7 @@ from .jtvae import Vocab, JTNNVAE
 from .SnD import prep_prm
 from .SnD import dock, sort_pose, save_pose
 from .SnD import hyperparam_loader, create_wd, smiles_to_sdfile
+from .SnD import single_generator, distributed_generator
 from .SnD import combine_designs, mkdf
 from .SnD import LSH_Convert, tree_coords, df_to_faerun
 # Load hyper parameters
@@ -44,9 +46,13 @@ try:
     design_list = jtvae.smiles_gen(p.seed_smi, p.ndesign)
 except KeyError as err:
     print('[KeyError]',err,
-          'does not exist in the current JTVAE model vocabulary "%s" (the training set of the model did not contain this structure),'%p.vocab_loc,
+          'does not exist in the current JTVAE model vocabulary "%s" \
+          (the training set of the model did not contain this structure),'%p.vocab_loc,
           'thus "%s" failed to initialize the model as seeding molecule!'%p.seed_smi)
     exit()
+
+# Check if design generations are ditributed among the top n designs (nseeds)
+sub_ndesign = int(p.ndesign)//int(p.nseeds) if p.nseeds > 1 else False
 
 # Create working directory
 wd = create_wd(a.output,p.receptor_name)
@@ -75,35 +81,22 @@ for j in range(p.ncycle):
     ranked_poses = sort_pose(docking_dir, p.sort_by, p.prefix) 
     save_pose(ranked_poses, design_dir)
     
+    ## Report the top design
+    top_energy, top_name, top_mol = ranked_poses[0]
+    top_smi = top_mol.GetProp('SMILES')
+    print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, top_smi, top_energy)+'\t'*6)
+    
     ## Generate new design list
-    if p.ensemble > 1:
-        top_smi_list = [Chem.MolToSmiles(mol) for _, _, mol in ranked_poses[:p.ensemble]]
+    if sub_ndesign:
+        design_list = distributed_generator(ranked_poses, p.nseeds, sub_ndesign, jtvae)
+    elif p.ensemble > 1:
+        top_smi_list = [mol.GetProp('SMILES') for _, _, mol in ranked_poses[:p.ensemble]]
         smi = jtvae.find_ensemble(top_smi_list)
         design_list = jtvae.smiles_gen(smi, p.ndesign)
-        best_score = ranked_poses[0][0]
-        print("[INFO]: Cycle %s: %s  Best Score: %s kcal/mol"%(j, smi, best_score)+'\t'*6)
     else:
-        for energy, name, mol in ranked_poses:
-            smi = mol.GetProp('SMILES')
-            try:
-                print('[INFO]: Generating new designs \t', end = '\r')
-                sys.stdout.flush()
-                # get new design list for the nex cycle
-                design_list = jtvae.smiles_gen(smi, p.ndesign)
-            # This is due to difference in parsing of SMILES (especially rings)
-            ## TODO: Convert sampledock to OOP structure and use the vectors directly
-            except KeyError as key:
-                print('[KeyError]',key,'is not part of the vocabulary (the model was not trained with this scaffold)')
-                continue
-            # if there are offspring designs, break the loop
-            if len(design_list) != 0: 
-                break 
-            # go to the next candidate if the current one does not give any return
-            else: 
-                print('Current design (%s) has no offspring; trying the next one \r'%name)
-
-        print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, smi, energy)+'\t'*6)
-
+        design_list = single_generator(ranked_poses, p.ndesign, jtvae)
+    
+    
 print("\n", p.ncycle, "cycles of design finished. Starting post-processing.")
 # Create post-process working directory
 postproc_wd = os.path.join(wd, "All_Designs_Processed")
