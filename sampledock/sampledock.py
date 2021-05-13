@@ -14,18 +14,7 @@ class sampledocker(object):
         self.generator = generator(self.params)
         # Create working directory
         self.wd = create_wd(self.params.out, self.params.receptor_name)
-    
-        ## VAE encoding and decoding on the initial seeding smiles
-        try:
-            self.design_list = self.generator.smiles_gen(self.params.seed_smi, False)
-        except KeyError as err:
-            print('[KeyError]',err,
-                  'does not exist in the current JTVAE model vocabulary "%s" \
-                  (the training set of the model did not contain this structure),'%self.params.vocab_loc,
-                  'thus "%s" failed to initialize the model as seeding molecule!'%self.params.seed_smi)
-            exit()
-
-
+        
         ## prepare rdock .prm file and get file path
         self.prmfile, cav_dir = prep_prm(p.receptor_file,p.ligand_file,p.receptor_name,wd)
 
@@ -34,8 +23,26 @@ class sampledocker(object):
         proc = subprocess.Popen(cmdline, shell=True)
         proc.wait()
         print('Docking pocket grid created')
-    
-    def Iterator(self):
+
+    def DocknSort(self, smiles_list, npose, sort_by = self.params.sort_by):
+        ligs = smiles_to_sdfile(smiles_list, temp_design_dir)
+        
+        dock(ligand_list, temp_dir, self.prmfile, 
+            self.params.docking_prm, npose, self.params.prefix)
+        ranked_poses = sort_pose(temp_dir, sort_by, self.params.prefix)
+        return ranked_poses
+        
+    def IterateCycles(self):
+        ## VAE encoding and decoding on the initial seeding smiles
+        try:
+            design_list = self.generator.smiles_gen(self.params.seed_smi, False)
+        except KeyError as err:
+            raise KeyError(
+                err,
+                'does not exist in the current JTVAE model vocabulary "%s" \
+                (the training set of the model did not contain this structure),'%self.params.vocab_loc,
+                'thus "%s" failed to initialize the model as seeding molecule!'%self.params.seed_smi
+            )
         ## Main loop: VAE on subsequent returned compounds
         for j in range(self.params.ncycle):
 
@@ -44,27 +51,20 @@ class sampledocker(object):
             os.makedirs(self.docking_dir)
 
             ## write .sdf file and get ligs file names
-            self.ligs = smiles_to_sdfile(self.design_list, self.design_dir)
+            ligs = smiles_to_sdfile(design_list, self.design_dir)
 
             ## Generate docking scores from .sd files
-            dock(ligs, docking_dir, self.prmfile, p.docking_prm, p.npose, p.prefix)
-            self.ranked_poses = sort_pose(docking_dir, p.sort_by, p.prefix) 
-            save_pose(ranked_poses, design_dir)
+            dock(ligs, self.docking_dir, self.prmfile, 
+                 self.params.docking_prm, self.params.npose, self.params.prefix)
+            ranked_poses = sort_pose(self.docking_dir, self.params.sort_by, self.params.prefix) 
+            save_pose(ranked_poses, self.design_dir)
 
             ## Report the top design
             top_energy, top_name, top_mol = ranked_poses[0]
             top_smi = top_mol.GetProp('SMILES')
             print("[INFO]: Cycle %s: %s %s kcal/mol"%(j, top_smi, top_energy)+'\t'*6)
 
-            ## Generate new design list
-            if sub_ndesign:
-                design_list = distributed_generator(ranked_poses, p.nseeds, sub_ndesign, jtvae)
-            elif p.ensemble > 1:
-                top_smi_list = [mol.GetProp('SMILES') for _, _, mol in ranked_poses[:p.ensemble]]
-                smi = jtvae.find_ensemble(top_smi_list)
-                design_list = jtvae.smiles_gen(smi, p.ndesign)
-            else:
-                design_list = single_generator(ranked_poses, p.ndesign, jtvae)
+            design_list = self.generator.generate(ranked_poses)
     
     
 print("\n", p.ncycle, "cycles of design finished. Starting post-processing.")

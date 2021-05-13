@@ -32,8 +32,6 @@ class JTNNVAE(nn.Module):
         self.A_assm = nn.Linear(latent_size, hidden_size, bias=False)
         self.assm_loss = nn.CrossEntropyLoss(reduction='sum')
         
-        ## nn.Linear: Applies a linear transformation to the incoming data (y = xA^T + b)
-        ## Not sure how the biases and weights are specified this way
         self.T_mean = nn.Linear(hidden_size, latent_size)
         self.T_var = nn.Linear(hidden_size, latent_size)
         self.G_mean = nn.Linear(hidden_size, latent_size)
@@ -60,60 +58,10 @@ class JTNNVAE(nn.Module):
     
     ## Added by Truman to calculated random z-vec from Gaussian sampling
     ## based on rsample()
-    def z_vec(self, z_mean, z_log_var):
-    
+    def add_noise_z(self, z_mean, z_log_var):
         epsilon = create_var(torch.randn_like(z_mean))
-        zr_vec = z_mean + torch.exp(z_log_var / 2) * epsilon
-        return zr_vec
-    
-    ## Added by Truman for Gaussian sampling and smiles generation for a given smiles
-    def smiles_gen(self,smiles,ndesign,prob_decode = False):
-        ## Convert smiles to one-hot encoding (altered function from original code)
-        x_tree, x_mol = self.encode_single_smiles(smiles)
-        
-        ## Encode one-hots to z-mean and log variance. Following Mueller et al.
-        tree_mean = self.T_mean(x_tree)
-        tree_log_var = -torch.abs(self.T_var(x_tree)) 
-        mol_mean = self.G_mean(x_mol)
-        mol_log_var = -torch.abs(self.G_var(x_mol))
-
-        smiles_list = []
-        for i in range(ndesign):
-            ## generate latent vectors (stochastic)
-            z_tree = self.z_vec(tree_mean, tree_log_var)
-            z_mol = self.z_vec(mol_mean, mol_log_var)
-            ## decode back to smiles
-            smilesout = self.decode(z_tree,z_mol,prob_decode)
-            ## Check if the smiles already exists
-            if smilesout not in smiles_list:
-                smiles_list.append(smilesout)    
-        return smiles_list
-    
-    def find_ensemble(self,smiles_list):
-        z_tree = []
-        z_mol = []
-        for smi in smiles_list:
-            try:
-                x_tree, x_mol = self.encode_single_smiles(smi)
-            # This is due to difference in parsing of SMILES (especially rings)
-            ## TODO: Convert sampledock to OOP structure and use the vectors directly
-            except KeyError as key:
-                print('[KeyError]',key,'is not part of the vocabulary (the model was not trained with this scaffold)')
-                continue
-            tree_mean = self.T_mean(x_tree)
-            tree_log_var = -torch.abs(self.T_var(x_tree)) 
-            mol_mean = self.G_mean(x_mol)
-            mol_log_var = -torch.abs(self.G_var(x_mol))
-            
-            z_tree.append(self.z_vec(tree_mean, tree_log_var))
-            z_mol.append(self.z_vec(mol_mean, mol_log_var))
-        
-        z_tree = torch.cat(z_tree)
-        z_mol = torch.cat(z_mol)
-        
-        return self.decode(z_tree.mean(0).reshape((1,self.latent_size)),
-                            z_mol.mean(0).reshape((1,self.latent_size)),
-                            False)
+        z_vec = z_mean + torch.exp(z_log_var / 2) * epsilon
+        return z_vec
         
     def encode_latent(self, jtenc_holder, mpn_holder):
         tree_vecs, _ = self.jtnn(*jtenc_holder)
