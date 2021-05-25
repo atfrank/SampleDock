@@ -33,3 +33,13 @@ The python script for JTVAE is updated for compatiblity with python 3.7.
 ## Target Specific Libraries:
 SARS-CoV-2: https://github.com/atfrank/SARS-CoV-2
 
+
+## COMMERCIAL USE LICENSE: 
+
+If you are interested in commercial licensing of these applications (clinical, operational, etc.) please contact the University of Michigan Office of Technology Transfer for a quote and licensing options.
+
+Drew Bennett - https://techtransfer.umich.edu/team/drew-bennett/
+
+or
+
+techtransfer@umich.edu
