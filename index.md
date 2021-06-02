@@ -4,5 +4,5 @@
 
 
 <div  markdown="0">
-    <iframe src="./sample_dock_tmap_1.html" style="height:200px;width:300px;" title="UMAP of Latent Space"></iframe> 
+    <iframe src="./sample_dock_tmap_1.html" style="height:600px;width:800px;" title="UMAP of Latent Space"></iframe> 
 </div>
