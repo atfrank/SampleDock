@@ -1,7 +1,6 @@
 ## Welcome to GitHub Pages
 
-
 ```markdown
-* [Link](url) and ![Image](src)
-* [Link](url) and ![Image](src)
+* [Link](https://atfrank.github.io/SampleDock/sample_dock_tmap_1.html)
+* [Link](https://atfrank.github.io/SampleDock/sample_dock_tmap_1.html)
 ```
