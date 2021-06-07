@@ -1,5 +1,6 @@
 # SampleDock
-Molecular design framework the merges generative AI and molecular docking. https://www.biorxiv.org/content/10.1101/2020.06.09.143289v1
+* Molecular design framework the merges generative AI and molecular docking ([manuscript](https://www.biorxiv.org/content/10.1101/2020.06.09.143289v1) and [webpage](https://atfrank.github.io/SampleDock/))
+
 
 ## Installation:
 Anaconda is recommended to install SampleDock. However, the general requirement is listed below.
