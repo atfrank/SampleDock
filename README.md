@@ -18,7 +18,7 @@ conda env create -f environment.yml
 source activate sampledock
 python setup.py install
 ```
-If you are using Anaconda and install the required packages with the `environment.yml`, the docking program, *rDock*, will be installed as the package `rxdock`. This is precompiled ditribution files from [RxDock] (https://www.rxdock.org/). `rxdock` has some commandline argument changes from rDock. The original rDock can be installed following the instruction: http://rdock.sourceforge.net/installation/. 
+If you are using Anaconda and install the required packages with the `environment.yml`, the docking program, *rDock*, will be installed as the package `rxdock`. This is precompiled executables released by [RxDock] (https://www.rxdock.org/). `rxdock` has some commandline argument changes from rDock. The original rDock can be installed following the instruction: http://rdock.sourceforge.net/installation/. 
 
 To run Sample and Dock, first specify the hyperparameters in `hyper.param`. 
 
