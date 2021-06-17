@@ -18,18 +18,16 @@ conda env create -f environment.yml
 source activate sampledock
 python setup.py install
 ```
-If you are using Anaconda, the docking simulation program, *rDock*, is by default installed with the package `rxdock` (precompiled bin files). If you wish to compile it locally, it can be installed following the instruction: http://rdock.sourceforge.net/installation/. 
+If you are using Anaconda and install the required packages with the `environment.yml`, the docking program, *rDock*, will be installed as the package `rxdock`. This is precompiled ditribution files from [RxDock] (https://www.rxdock.org/). `rxdock` has some commandline argument changes from rDock. The original rDock can be installed following the instruction: http://rdock.sourceforge.net/installation/. 
 
-**Note**: the command options are slightly different between the two versions.
-
-To run Sample and Dock, first specify the hyperparameters at `hyper.param`. 
+To run Sample and Dock, first specify the hyperparameters in `hyper.param`. 
 
 Then, `python -m sampledock hyper.param`
 
 ## JTVAE Model:
 The JTVAE model is developed by Jin, W., Jaakkola, T. et al. and retireved from git: https://github.com/wengong-jin/icml18-jtnn. The default JTVAE generation model, `moses-h450z56`, is supplied with and trained with [MOSES dataset](https://github.com/molecularsets/moses).
 
-The python script for JTVAE is updated for compatiblity with python 3.7.
+The python scripts for JTVAE are modified for compatiblity with python 3.7.
 
 ## Target Specific Libraries:
 SARS-CoV-2: https://github.com/atfrank/SARS-CoV-2
