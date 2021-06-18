@@ -21,11 +21,11 @@
 title: Sample and Dock
 email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Molecular design framework the merges generative AI and molecular docking 
+  Molecular design framework that merges generative AI and molecular docking 
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
-github_username: atfrank
+github_username: Truman-Xu
 
 # Build settings
 theme: jekyll-theme-slate
