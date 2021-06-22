@@ -11,7 +11,7 @@ Sample and Dock webservice can be accessed from [SMALTR](https://smaltr.org/).
 <div>
     <iframe src="./vis_maps/tmap_CDK2_ndesigns.html" style="height:800px;width:800px;" title="TMAP of Varing Design per Cycle for CDK2"></iframe> 
     <p style="text-align:right">
-        <a href="https://atfrank.github.io/SampleDock/vis_maps/sample_dock_tmap_1.html">View in fullscreen</a> 
+        <a href="https://atfrank.github.io/SampleDock/vis_maps/tmap_CDK2_ndesigns.html">View in fullscreen</a> 
     </p>
 </div>
 
