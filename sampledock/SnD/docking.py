@@ -13,7 +13,7 @@ import subprocess
 
 def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
     # ligs must be a list of file path
-    print('[INFO]: Docking in Progress\t\t', end = '\r')
+    print('[INFO]: Docking in Progress', end = '\t\t\r')
     sys.stdout.flush()
     procs = []
     for i,lig in enumerate(ligs):
@@ -27,7 +27,7 @@ def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
     for proc in procs:
         # makes sure the docking has completed before this function ends
         proc.wait()
-    print('[INFO]: Docking Complete!  \t', end = '\r')
+    print('[INFO]: Docking Complete!', end = '\t\t\r')
     sys.stdout.flush()
 
 def sort_pose(dock_dir, sort_by, prefix = None):
@@ -52,7 +52,7 @@ def sort_pose(dock_dir, sort_by, prefix = None):
         # retrieve the best pose mol for each design
         best_pose = sorted_poses[0]
         best_poses.append((float(best_pose.GetProp(sort_by)),best_pose.GetProp('Name'),best_pose))
-    print('[INFO]: Docked Poses Sorted       \t', end = '\r')
+    print('[INFO]: Docked Poses Sorted', end = '\t\t\r')
     sys.stdout.flush()
     # return the sorted tuple (ranked design based on the score of the best pose)
     return sorted(best_poses)

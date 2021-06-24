@@ -18,7 +18,5 @@ dependencies:
   - rxdock
   - tmap
   - tqdm
-  - pip
-  - pip:
-    - faerun
-    - mhfp
+  - faerun
+  - mhfp

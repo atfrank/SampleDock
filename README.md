@@ -1,9 +1,17 @@
+[![Anaconda-Server Badge](https://anaconda.org/aaronfranklab/sampledock/badges/installer/conda.svg)](https://conda.anaconda.org/aaronfranklab)
 # SampleDock
-* Molecular design framework the merges generative AI and molecular docking ([manuscript](https://www.biorxiv.org/content/10.1101/2020.06.09.143289v1) and [webpage](https://atfrank.github.io/SampleDock/))
+* Molecular design framework that merges generative AI and molecular docking ([manuscript](https://www.biorxiv.org/content/10.1101/2020.06.09.143289v1) and [webpage](https://atfrank.github.io/SampleDock/))
 
 
 ## Installation:
-Anaconda is recommended to install SampleDock. However, the general requirement is listed below.
+### Option 1
+Anaconda is recommended to install SampleDock. 
+```
+conda install sampledock -c AaronFrankLab -c conda-forge -c bioconda -c pytorch -c tmap
+```
+### Option 2
+Or if you wish to install from source, the general requirement is listed below.
+#### Main dependencies:
 ```
   - python=3.7
   - pytorch
@@ -12,7 +20,13 @@ Anaconda is recommended to install SampleDock. However, the general requirement 
   - rdkit
   - rxdock (or rdock)
 ```
-To install the required python packages with anaconda:
+#### Data visualizations tools:
+```
+  - tmap
+  - faerun
+  - mhfp
+```
+You can clone this repo and install the required python packages with conda environment.yml
 ```
 conda env create -f environment.yml
 source activate sampledock
@@ -20,6 +34,7 @@ python setup.py install
 ```
 If you are using Anaconda and install the required packages with the `environment.yml`, the docking program, *rDock*, will be installed as the package `rxdock`. This is precompiled executables released by [RxDock](https://www.rxdock.org/). `rxdock` has some commandline argument changes from rDock. The original rDock can be installed following the instruction: http://rdock.sourceforge.net/installation/. 
 
+## Usage:
 To run Sample and Dock, first specify the hyperparameters in `hyper.param`. 
 
 Then, `python -m sampledock hyper.param`
