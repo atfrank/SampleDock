@@ -16,15 +16,6 @@ Comparison of different number of designs per cycle for CDK2 designs. Only best 
     </p>
 </div>
 
-### CDK2 20 Design TMAP
-All designs for CDK2 from the trial with 20 designs per cycle and 24-hour run
-<div>
-    <iframe src="./vis_maps/tmap_CDK2_20designs_all.html" style="height:800px;width:800px;" title="TMAP of Varing Design per Cycle for CDK2"></iframe> 
-    <p style="text-align:right">
-        <a href="https://atfrank.github.io/SampleDock/vis_maps/tmap_CDK2_20designs_all.html">View in fullscreen</a> 
-    </p>
-</div>
-
 ### M<sup>Pro</sup> TMAP 
 Best design of each cycle for M<sup>Pro</sup> (20 designs each cycle and 24-hour run)
 <div>
@@ -45,23 +36,15 @@ Comparison of designs from 20 different initial scaffolds. All designs from each
     <img src="./vis_maps/20-scaff-wide.svg" alt="Top 20 Scaffold on ChEMBLt" width="800"> 
 </div>
 
-### CDK2 Ensemble TMAP 
+------------------------------------------
+### Other TMAPS
+#### [CDK2 20 Design TMAP](https://atfrank.github.io/SampleDock/vis_maps/tmap_CDK2_20designs_all.html)
+All designs for CDK2 from the trial with 20 designs per cycle and 24-hour run
+
+#### [CDK2 Ensemble TMAP](https://atfrank.github.io/SampleDock/vis_maps/tmap_CDK2_ensemble.html)
 Best 5 designs of each cycle for CDK2 using top 5 ensembling appproach (20 designs generated from previous top 5 designs for each cycle, and 24-hour run)
-<div>
-    <iframe src="./vis_maps/tmap_CDK2_ensemble.html" style="height:800px;width:800px;" title="TMAP of Ensemble Design for CDK2"></iframe> 
-    <p style="text-align:right">
-        <a href="https://atfrank.github.io/SampleDock/vis_maps/tmap_CDK2_ensemble.html">View in fullscreen</a> 
-    </p>
-</div>
 
+#### [CDK2 Latent Space UMAP](https://atfrank.github.io/SampleDock/vis_maps/umap_CDK2_ndesigns.html) 
+Comparison of different number of designs per cycle for CDK2 designs. 3D UMAP generated using the latent space coordinates (Tree Space, 28 dimensions). All designs plotted.<br>
 
-### CDK2 Latent Space UMAP 
-Comparison of different number of designs per cycle for CDK2 designs. 3D UMAP generated using the latent space coordinates (Tree Space, 28 dimensions). All designs plotted.
-<div>
-    <iframe src="./vis_maps/umap_CDK2_ndesigns.html" style="height:800px;width:800px;" title="UMAP of Latent Space by Varing Design per Cycle for CDK2"></iframe> 
-    <p style="text-align:right">
-        <a href="https://atfrank.github.io/SampleDock/vis_maps/umap_CDK2_ndesigns.html">View in fullscreen</a> 
-    </p>
-</div>
-
-Visualization supported by [Faerun](https://github.com/reymond-group/faerun-python)
+Visualization Powered by [Faerun](https://github.com/reymond-group/faerun-python)
