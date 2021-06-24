@@ -13,7 +13,7 @@ import subprocess
 
 def dock(ligs, dock_dir, prmfile, docking_prm, npose, prefix = 'docked'):
     # ligs must be a list of file path
-    print('[INFO]: Docking in Progress\t', end = '\r')
+    print('[INFO]: Docking in Progress\t\t', end = '\r')
     sys.stdout.flush()
     procs = []
     for i,lig in enumerate(ligs):
@@ -40,7 +40,7 @@ def sort_pose(dock_dir, sort_by, prefix = None):
                       if x.endswith('.sd')]
     
     if len(poses_mols) == 0: 
-        raise Exception('No .sd file matching the criteria in %s'%dock_dir)
+        raise FileNotFoundError('No .sd file matching the criteria in %s'%dock_dir)
     
     best_poses = []
     for mol_path in poses_mols:

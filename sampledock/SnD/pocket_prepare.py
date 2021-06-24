@@ -51,10 +51,10 @@ def wrt_prm(parameter,filename='pocket_docking.prm'):
 def prep_prm(receptor,ligand,recep_name,target_dir):
     
     receptor = os.path.abspath(receptor)
-    if not os.path.exists(receptor): print(receptor+'\nRECEPTOR FILE NOT EXIST!'); return None
+    if not os.path.exists(receptor): raise FileNotFoundError(receptor+'\nRECEPTOR FILE NOT EXIST!')
     
     ligand = os.path.abspath(ligand)
-    if not os.path.exists(ligand): print(ligand+'\nLIGAND FILE NOT EXIST!'); return None
+    if not os.path.exists(ligand): raise FileNotFoundError(ligand+'\nLIGAND FILE NOT EXIST!')
     
     cav_dir = os.path.abspath(target_dir)+'/cavity'
     os.makedirs(cav_dir)
@@ -65,10 +65,16 @@ def prep_prm(receptor,ligand,recep_name,target_dir):
 
 def create_cav(prmfile):
     # rbcavity must be installed/loaded to execute the cmdline
-    cmdline = "rbcavity -was -d -r %s"%prmfile
+    cmdline = "rbcavity -W -d -r %s"%prmfile
     proc = subprocess.Popen(cmdline, shell=True)
-    proc.wait()
-    print('Docking pocket grid created for: \n'+prmfile+'\n')
+    returncode = proc.wait()
+    if returncode == 2:
+        cmdline = "rbcavity -was -d -r %s"%prmfile
+        proc = subprocess.Popen(cmdline, shell=True)
+        returncode = proc.wait()
+    if returncode == 0:
+        print('Docking pocket grid created for: \n'+prmfile+'\n')
+    else: raise Exception('Cavity creation failed')
     
 if __name__ == "__main__":
     import argparse

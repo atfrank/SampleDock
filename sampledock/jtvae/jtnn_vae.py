@@ -32,8 +32,6 @@ class JTNNVAE(nn.Module):
         self.A_assm = nn.Linear(latent_size, hidden_size, bias=False)
         self.assm_loss = nn.CrossEntropyLoss(reduction='sum')
         
-        ## nn.Linear: Applies a linear transformation to the incoming data (y = xA^T + b)
-        ## Not sure how the biases and weights are specified this way
         self.T_mean = nn.Linear(hidden_size, latent_size)
         self.T_var = nn.Linear(hidden_size, latent_size)
         self.G_mean = nn.Linear(hidden_size, latent_size)
@@ -98,7 +96,9 @@ class JTNNVAE(nn.Module):
             # This is due to difference in parsing of SMILES (especially rings)
             ## TODO: Convert sampledock to OOP structure and use the vectors directly
             except KeyError as key:
-                print('[KeyError]',key,'is not part of the vocabulary (the model was not trained with this scaffold)')
+                print('[KeyError]',key,\
+                'is not part of the vocabulary \
+                (the model was not trained with this scaffold)')
                 continue
             tree_mean = self.T_mean(x_tree)
             tree_log_var = -torch.abs(self.T_var(x_tree)) 
@@ -223,8 +223,11 @@ class JTNNVAE(nn.Module):
 
         cur_mol = cur_mol.GetMol()
         set_atommap(cur_mol)
-        cur_mol = Chem.MolFromSmiles(Chem.MolToSmiles(cur_mol))
-        return Chem.MolToSmiles(cur_mol) if cur_mol is not None else None
+        try:
+            Chem.SanitizeMol(cur_mol)
+            return Chem.MolToSmiles(cur_mol) 
+        except rdkit.Chem.rdchem.AtomKekulizeException:
+            return None
         
     def dfs_assemble(self, y_tree_mess, x_mol_vecs, all_nodes, cur_mol, global_amap, fa_amap, cur_node, fa_node, prob_decode, check_aroma):
         fa_nid = fa_node.nid if fa_node is not None else -1

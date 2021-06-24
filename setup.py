@@ -9,7 +9,7 @@ with open('LICENSE_NON-COMMERICAL') as f:
 
 setup(
     name='sampledock',
-    version='0.5',
+    version='0.5.1',
     description='Molecular design framework the merges generative AI and molecular docking',
     author='Ziqiao Xu and Aaron Frank',
     author_email='afrankz@umich.edu',

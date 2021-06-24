@@ -19,7 +19,7 @@ from rdkit import rdBase, Chem
 rdBase.DisableLog('rdApp.error')
 from .jtvae import Vocab, JTNNVAE
 # Sample and Dock tools
-from .SnD import prep_prm
+from .SnD.pocket_prepare import prep_prm, create_cav
 from .SnD import dock, sort_pose, save_pose
 from .SnD import hyperparam_loader, create_wd, smiles_to_sdfile
 from .SnD import single_generator, distributed_generator
@@ -61,10 +61,7 @@ wd = create_wd(a.output,p.receptor_name)
 prmfile, cav_dir = prep_prm(p.receptor_file,p.ligand_file,p.receptor_name,wd)
 
 ## create pocket
-cmdline = p.cavity_protocol+' %s > %s/create_cavity.out'%(prmfile,cav_dir)
-proc = subprocess.Popen(cmdline, shell=True)
-proc.wait()
-print('Docking pocket grid created')
+create_cav(prmfile)
 
 ## Main loop: VAE on subsequent returned compounds
 for j in range(p.ncycle):

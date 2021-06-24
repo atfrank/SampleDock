@@ -67,6 +67,12 @@ def copy_edit_mol(mol):
 
 def get_clique_mol(mol, atoms):
     smiles = Chem.MolFragmentToSmiles(mol, atoms, kekuleSmiles=True)
+    ## Comment by Truman 6/23/2021
+    ## The above code will not longer work on this perticular task
+    ## with newer versions of rdkit (starting from v2021.03.1 and hopefully ends with 03.4?)
+    ## See issue https://github.com/rdkit/rdkit/issues/3998
+    ## and https://github.com/chemprop/chemprop/pull/182
+    ## The work on the patch is to be released in 2021.03.4
     new_mol = Chem.MolFromSmiles(smiles, sanitize=False)
     new_mol = copy_edit_mol(new_mol).GetMol()
     new_mol = sanitize(new_mol) #We assume this is not None
@@ -118,7 +124,9 @@ def tree_decomp(mol):
         cnei = nei_list[atom]
         bonds = [c for c in cnei if len(cliques[c]) == 2]
         rings = [c for c in cnei if len(cliques[c]) > 4]
-        if len(bonds) > 2 or (len(bonds) == 2 and len(cnei) > 2): #In general, if len(cnei) >= 3, a singleton should be added, but 1 bond + 2 ring is currently not dealt with.
+        if len(bonds) > 2 or (len(bonds) == 2 and len(cnei) > 2): 
+            # In general, if len(cnei) >= 3, a singleton should be added, 
+            # but 1 bond + 2 ring is currently not dealt with.
             cliques.append([atom])
             c2 = len(cliques) - 1
             for c1 in cnei:
@@ -134,9 +142,10 @@ def tree_decomp(mol):
                     c1,c2 = cnei[i],cnei[j]
                     inter = set(cliques[c1]) & set(cliques[c2])
                     if edges[(c1,c2)] < len(inter):
-                        edges[(c1,c2)] = len(inter) #cnei[i] < cnei[j] by construction
+                        edges[(c1,c2)] = len(inter) 
+                        #cnei[i] < cnei[j] by construction
 
-    edges = [u + (MST_MAX_WEIGHT-v,) for u,v in edges.items()] #Changed from .iteritems() to .items() by Truman for python 3.7
+    edges = [u + (MST_MAX_WEIGHT-v,) for u,v in edges.items()] 
     if len(edges) == 0:
         return cliques, edges
 

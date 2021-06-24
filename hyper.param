@@ -2,20 +2,20 @@
 
 ############### Parameters for SnD #####################
 receptor_name = CDK2_5IEV                          # name the receptor to create dir
-receptor_file = /home/ziqiaoxu/SampleDock/targets/CDK2_5IEV/5IEV.mol2      
+receptor_file = ./targets/CDK2_5IEV/5IEV.mol2      
                                                    # must be mol2 format
-ligand_file = /home/ziqiaoxu/SampleDock/targets/CDK2_5IEV/Roniciclib.sd          
+ligand_file = ./targets/CDK2_5IEV/Roniciclib.sd          
                                                    # must be sd format
 ncycle = 1600                                      # number of cycles to be run
 ndesign = 20                                       # number of designs to be generated per cycle
-ensemble = 1                                       # top of number of design to generate the average structure 
+ensemble = 1                                       # number of top designs to generate the average structure 
                                                    # (1 being just the top scoring structure)
-seed_smi = C1(C(NC2=CC=CC=C2)=NC=N3)=C3C=CC=C1     
+nseeds = 1                                         # number of top designs to be used as seeds for distributed generation
+                                                   # nseeds overrides ensemble
+seed_smi = C1=CC=CC=C1    
                                                    # initial seeding SMILES for the first cycle, default to benzene
 
 ############### Parameters for rDock ###################
-cavity_protocol = rbcavity -was -d -r                # cmd and option for creating pocket 
-                                                   # -W option for rxdock precompiled bin file, -was for locally compiled rdock installation
 docking_prm = dock.prm                             # docking protocol (-p), no solvation term by default 
 npose = 100                                        # number of poses generated (-n)
 prefix = pose_docked_                              # prefix of the output files from rDock
