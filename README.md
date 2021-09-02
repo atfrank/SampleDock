@@ -5,12 +5,16 @@
 
 ## Installation:
 ### Option 1
-Anaconda is recommended to install SampleDock. 
+Installation using Anaconda 
+
+**Note:** The sampledock conda package is only distributed for linux systems. You will need to use **Option 2** for installation on Mac OS and Windows
 ```
+conda create -n sampledock
+conda activate sampledock
 conda install sampledock -c AaronFrankLab -c conda-forge -c bioconda -c pytorch -c tmap
 ```
 ### Option 2
-Or if you wish to install from source, the general requirement is listed below.
+If you wish to install from source, the general requirement is listed below.
 #### Main dependencies:
 ```
   - python=3.7
