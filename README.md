@@ -33,7 +33,7 @@ If you wish to install from source, the general requirement is listed below.
 You can clone this repo and install the required python packages with conda environment.yml
 ```
 conda env create -f environment.yml
-source activate sampledock
+conda activate sampledock
 python setup.py install
 ```
 If you are using Anaconda and install the required packages with the `environment.yml`, the docking program, *rDock*, will be installed as the package `rxdock`. This is precompiled executables released by [RxDock](https://www.rxdock.org/). `rxdock` has some commandline argument changes from rDock. The original rDock can be installed following the instruction: http://rdock.sourceforge.net/installation/. 
