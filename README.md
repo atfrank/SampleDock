@@ -9,7 +9,7 @@ Installation using Anaconda
 
 **Note:** The sampledock conda package is only distributed for linux systems. You will need to use **Option 2** for installation on Mac OS and Windows
 ```
-conda create -n sampledock
+conda create -n sampledock python=3.7
 conda activate sampledock
 conda install sampledock -c AaronFrankLab -c conda-forge -c bioconda -c pytorch -c tmap
 ```

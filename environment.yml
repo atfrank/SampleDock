@@ -8,12 +8,8 @@ channels:
 dependencies:
   - python>=3.7
   - pytorch
-  - rdkit=2020.09.5
-  ## Note: The new code for Chem.MolFragmentToSmiles() will not work on the JTVAE
-  ## in the newer versions of rdkit (starting from v2021.03.1 and hopefully ends with 03.4?)
-  ## See issue https://github.com/rdkit/rdkit/issues/3998
-  ## and https://github.com/chemprop/chemprop/pull/182
-  ## The work on the patch is to be released in 2021.03.4
+  - rdkit>=2021.3.1
+  ## 2019.9.5 has breaking change. Fixed in 2021.3.1 and forward
   - scipy
   - rxdock
   - tmap
