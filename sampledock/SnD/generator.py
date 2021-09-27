@@ -21,7 +21,7 @@ def single_generator(ranked_poses, ndesign, jtvae):
     for energy, name, mol in ranked_poses:
         smi = mol.GetProp('SMILES')
         design_list = _generator(smi, ndesign, jtvae)
-        if len(design_list) > 0: 
+        if design_list: 
             break 
         # go to the next candidate if the current one does not give any return
         else: 
