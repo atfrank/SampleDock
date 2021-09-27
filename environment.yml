@@ -1,3 +1,4 @@
+
 name: sampledock
 channels:
   - pytorch
@@ -8,8 +9,8 @@ channels:
 dependencies:
   - python>=3.7
   - pytorch
-  - rdkit>=2021.3.1
-  ## 2019.9.5 has breaking change. Fixed in 2021.3.1 and forward
+  - rdkit=2020.9.3
+  ## 2020.9.5 has breaking change. 
   - scipy
   - rxdock
   - tmap
