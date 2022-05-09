@@ -7,12 +7,23 @@ from rdkit.Chem import AllChem
 from rdkit import rdBase
 ## Disable rdkit Logs
 rdBase.DisableLog('rdApp.error')
+from ..jtvae import Vocab, JTNNVAE
 
 import subprocess
 from datetime import date
 
+class stockparamloader:
+    def __init__(self, model_loc, vocab_loc):
+        self.model_loc = model_loc
+        vocab_list = [x.strip("\r\n ") for x in open(vocab_loc)]
+        self.vocab = Vocab(vocab_list)
+        ###### values below are specific to the stock MOSES model #######
+        self.hidden_size = 450
+        self.latent_size = 56                                   
+        self.depthT = 20
+        self.depthG = 3
 
-class hyperparam_loader(object):
+class hyperparamloader:
     def __init__(self,filename=None):
         self.paramfile = os.path.abspath(filename)
         FILE = open(filename)

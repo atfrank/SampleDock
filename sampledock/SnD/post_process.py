@@ -39,7 +39,10 @@ def process_by_folder(fd, inpath):
         # Select the highest score design in the cycle
         # (the first one in the ranked sd file)
         best_mol = cir_mols[0]
-    return cir_mols, best_mol
+        return cir_mols, best_mol
+    else:
+        print(sd,'does not exist')
+        return [], None
 
 # calculated mol properties from each cycle and combine mols in one sdf file
 def combine_designs(inpath, outpath):
@@ -62,7 +65,7 @@ def combine_designs(inpath, outpath):
     for l in mol_lists:
         all_mols.extend(l)
     # Convert tuple to list
-    best_mols = list(best_mols)
+    best_mols = [m for m in best_mols if m]
 
     print(len(all_mols), "total molecules combined from", len(folders),"cycles in\n", inpath)
     print(len(best_mols), "best designs extracted.\n")
@@ -92,7 +95,7 @@ def df_from_molProps(mol_list):
               (
                   mol.GetProp('Name'),
                   int(mol.GetProp('Cycle')),
-                  ## The score option is hard coded for now, will change everything to OOP later
+                  ## TODO: The score option is hard coded for now, change everything to OOP later
                   float(mol.GetProp('SCORE.INTER')),
                   mol.GetProp('SMILES'),
                   float(mol.GetProp('LogP')),

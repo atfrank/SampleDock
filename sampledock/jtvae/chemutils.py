@@ -66,13 +66,23 @@ def copy_edit_mol(mol):
     return new_mol
 
 def get_clique_mol(mol, atoms):
-    smiles = Chem.MolFragmentToSmiles(mol, atoms, kekuleSmiles=True)
+    # Changed to try and except here to avoid rdkit issue 10/2/2021
+    try:
+        smiles = Chem.MolFragmentToSmiles(mol, atoms, kekuleSmiles=True)
+    except rdkit.Chem.rdchem.KekulizeException:
+        smiles = Chem.MolFragmentToSmiles(mol, atoms, kekuleSmiles=False) 
+    
+#     smiles = Chem.MolFragmentToSmiles(mol, atoms, kekuleSmiles=True)
     ## Comment by Truman 6/23/2021
     ## The above code will not longer work on this perticular task
     ## with newer versions of rdkit (starting from v2021.03.1 and hopefully ends with 03.4?)
     ## See issue https://github.com/rdkit/rdkit/issues/3998
     ## and https://github.com/chemprop/chemprop/pull/182
     ## The work on the patch is to be released in 2021.03.4
+    ## Update 10/1/2021 by Truman
+    ## Landrum fixed part of the issue in the release 2021.03.4
+    ## However, same issue still persists on some molecules
+    
     new_mol = Chem.MolFromSmiles(smiles, sanitize=False)
     new_mol = copy_edit_mol(new_mol).GetMol()
     new_mol = sanitize(new_mol) #We assume this is not None
@@ -264,14 +274,18 @@ def enum_attach(ctr_mol, nei_node, amap, singletons):
 def enum_assemble(node, neighbors, prev_nodes=[], prev_amap=[]):
     all_attach_confs = []
     singletons = [nei_node.nid for nei_node in neighbors + prev_nodes if nei_node.mol.GetNumAtoms() == 1]
-
+#     print(node.smiles,len(neighbors))
+    
     def search(cur_amap, depth):
         if len(all_attach_confs) > MAX_NCAND:
-            return
+#             print("Max N Cand Hit! {}".format(len(all_attach_confs), end='\r'))
+            return 
+        
         if depth == len(neighbors):
             all_attach_confs.append(cur_amap)
-            return
-
+#             print("{}, depth: {}, n neighbors: {}".format(len(all_attach_confs), depth, len(neighbors),end='\r'))
+            return 
+        
         nei_node = neighbors[depth]
         cand_amap = enum_attach(node.mol, nei_node, cur_amap, singletons)
         cand_smiles = set()
@@ -286,7 +300,8 @@ def enum_assemble(node, neighbors, prev_nodes=[], prev_amap=[]):
                 continue
             cand_smiles.add(smiles)
             candidates.append(amap)
-
+        
+#         print("Candidate Length:", len(candidates))
         if len(candidates) == 0:
             return
 
